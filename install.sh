@@ -26,25 +26,30 @@ yellow=`tput setaf 3`
 reset=`tput sgr0`
 
 # Requested version to install this set of demo on Jetson
-ISAAC_DEMO_L4T="35.1" # Jetpack 5.0.2
-ISAAC_DEMO_PATH="$(pwd)/isaac_ros-dev/ros_ws"
-ISAAC_DEMO_SRC_PATH="$ISAAC_DEMO_PATH/src"
-local SILENT=false
+ISAAC_DEMO_ROS_L4T="35.1" # 35.1 = Jetpack 5.0.2
+ISAAC_SIM_VERSION="2022.2.0"  # Isaac SIM version
 
+# DO NOT EDIT
+
+ISAAC_ROS_PATH="$(pwd)/isaac_ros-dev/ros_ws"
+ISAAC_ROS_SRC_PATH="$ISAAC_ROS_PATH/src"
+ISAAC_SIM_PATH="$HOME/.local/share/ov/pkg/isaac_sim-$ISAAC_SIM_VERSION"
+ISAAC_SIM_ROS_PATH="$ISAAC_SIM_PATH/ros2_workspace"
 
 workstation_install()
 {
+    if [ ! -d $ISAAC_SIM_PATH ] ; then
+        echo "${bold}${red}Install Isaac SIM $ISAAC_SIM_VERSION on your workstation${reset}"
+        exit 1
+    fi
+
     echo "${green}${bold}Install on Desktop${reset}"
 
-    while ! $SILENT; do
-        read -p "have you installed Isaac SIM on your platform? [Y/n] " yn
-            case $yn in
-                [Yy]* ) # Break and install jetson_stats 
-                        break;;
-                [Nn]* ) exit;;
-            * ) echo "Please answer yes or no.";;
-        esac
-    done
+    cd $ISAAC_SIM_ROS_PATH
+    # Source 
+    # source /opt/ros/foxy/setup.bash
+    # Run Isaac ROS with Carter in a Warehoue
+    $ISAAC_SIM_PATH/python.sh
 }
 
 jetson_l4t_check()
@@ -56,15 +61,15 @@ jetson_l4t_check()
     # Load release and revision
     local JETSON_L4T_RELEASE=$(echo $JETSON_L4T_ARRAY | cut -f1,2 -d '.')
     local JETSON_L4T_REVISION=${JETSON_L4T_ARRAY#"$JETSON_L4T_RELEASE."}
-    echo $JETSON_L4T_RELEASE
+    echo "$JETSON_L4T_RELEASE"
 }
 
 
 jetson_install()
 {
     local JETSON_L4T=$(jetson_l4t_check)
-    if [[ $JETSON_L4T != $ISAAC_DEMO_L4T ]] ; then
-        echo "${bold}${red}You cannot install isaac_demo on this Jetpack with L4T $JETSON_L4T need L4T $ISAAC_DEMO_L4T${reset}"
+    if [[ $JETSON_L4T != $ISAAC_DEMO_ROS_L4T ]] ; then
+        echo "${bold}${red}You cannot install isaac_demo on this Jetpack with L4T $JETSON_L4T need L4T $ISAAC_DEMO_ROS_L4T${reset}"
         exit 1
     fi
 
@@ -75,30 +80,30 @@ jetson_install()
         sudo pip3 install -U vcstool
     fi
 
-    if [ ! -d $ISAAC_DEMO_SRC_PATH ] ; then
-        echo " - ${green}Make folder $ISAAC_DEMO_SRC_PATH${reset}"
-        mkdir -p $ISAAC_DEMO_SRC_PATH
+    if [ ! -d $ISAAC_ROS_SRC_PATH ] ; then
+        echo " - ${green}Make folder $ISAAC_ROS_SRC_PATH${reset}"
+        mkdir -p $ISAAC_ROS_SRC_PATH
     fi
 
     local project_path=$(pwd)
 
     echo " - ${green}Pull or update all Isaac ROS packages${reset}"
-    cd $ISAAC_DEMO_PATH
+    cd $ISAAC_ROS_PATH
     # Recursive import
     # https://github.com/dirk-thomas/vcstool/issues/93
     vcs import src < $project_path/isaac_demo.rosinstall --recursive
     vcs pull src
 
-    if [ ! -f $ISAAC_DEMO_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
+    if [ ! -f $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
         echo " - ${green}Setup Isaac ROS docker image${reset}"
-        cd $ISAAC_DEMO_SRC_PATH/isaac_ros_common/scripts
+        cd $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts
         touch .isaac_ros_common-config 
         echo CONFIG_IMAGE_KEY=humble.nav2.realsense > .isaac_ros_common-config
     fi
 
     echo " - ${green}Move to Isaac ROS common and run image${reset}"
-    cd $ISAAC_DEMO_SRC_PATH/isaac_ros_common
-    bash scripts/run_dev.sh $ISAAC_DEMO_PATH
+    cd $ISAAC_ROS_SRC_PATH/isaac_ros_common
+    bash scripts/run_dev.sh $ISAAC_ROS_PATH
 }
 
 
@@ -120,6 +125,7 @@ usage()
 main()
 {
     local PLATFORM="$(uname -m)"
+    local SILENT=false
 
     # Decode all information from startup
     while [ -n "$1" ]; do
@@ -148,9 +154,6 @@ main()
         echo " - ${bold}Jetson L4T:${reset} ${green}$JETSON_L4T${reset}"
     fi
     echo "---------------------------"
-
-    
-    echo $l4t
 
     while ! $SILENT; do
         read -p "Do you wish to install isaac_demo on this platform? [Y/n] " yn
