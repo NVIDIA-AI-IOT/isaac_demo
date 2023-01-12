@@ -36,6 +36,7 @@ ISAAC_ROS_SRC_PATH="$ISAAC_ROS_PATH/src"
 ISAAC_SIM_PATH="$HOME/.local/share/ov/pkg/isaac_sim-$ISAAC_SIM_VERSION"
 ISAAC_SIM_ROS_PATH="$ISAAC_SIM_PATH/ros2_workspace"
 ISAAC_SIM_ROS_SRC_PATH="$ISAAC_SIM_ROS_PATH/src"
+PROJECT_PATH=$(pwd)
 
 workstation_install()
 {
@@ -46,13 +47,21 @@ workstation_install()
 
     echo "${green}${bold}Install on Desktop${reset}"
 
-    local project_path=$(pwd)
     echo " - ${green}Pull or update all Isaac ROS packages${reset}"
     cd $ISAAC_SIM_ROS_PATH
     # Recursive import
     # https://github.com/dirk-thomas/vcstool/issues/93
-    vcs import src < $project_path/rosinstall/isaac_demo_workstation.rosinstall --recursive
+    vcs import src < $PROJECT_PATH/rosinstall/isaac_demo_workstation.rosinstall --recursive
     vcs pull src
+
+    if [ -d $HOME/.ros/ ] ; then
+        if [ ! -f $HOME/.ros/fastdds.xml ] ; then
+            echo " - ${green}Copy Fast DDS configuration on .ros folder${reset}"
+            cp $PROJECT_PATH/fastdds.xml $HOME/.ros/fastdds.xml
+        fi
+    else
+        echo "${bold}${red}ROS not installed${reset}"
+    fi
 
     echo " - ${green}Start Isaac SIM simulation${reset}"
     # source /opt/ros/foxy/setup.bash
@@ -89,13 +98,11 @@ jetson_install()
         mkdir -p $ISAAC_ROS_SRC_PATH
     fi
 
-    local project_path=$(pwd)
-
     echo " - ${green}Pull or update all Isaac ROS packages${reset}"
     cd $ISAAC_ROS_PATH
     # Recursive import
     # https://github.com/dirk-thomas/vcstool/issues/93
-    vcs import src < $project_path/rosinstall/isaac_demo_jetson.rosinstall --recursive
+    vcs import src < $PROJECT_PATH/rosinstall/isaac_demo_jetson.rosinstall --recursive
     vcs pull src
 
     if [ ! -f $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then

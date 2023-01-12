@@ -33,7 +33,7 @@ cd ...
 Run the installer
 
 ```console
-./install.sh
+./isaac_demo.sh
 ```
 
 If you are on NVIDIA Jetson AGX Orin you will see start a new terminal inside a docker image, run the command below
