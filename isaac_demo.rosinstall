@@ -7,3 +7,8 @@
 - git:
     local-name: isaac_ros_nvblox
     uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox.git
+# Dependency issue from Isaac ROS NVblox
+- git:
+    local-name: realsense-ros
+    version: ros2-development
+    uri: https://github.com/IntelRealSense/realsense-ros.git

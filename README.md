@@ -22,3 +22,22 @@ Tools:
 2. eth cables
 
 ## Install
+
+Clone this repository and move
+
+```console
+git clone ...
+cd ...
+```
+
+Run the installer
+
+```console
+./install.sh
+```
+
+If you are on NVIDIA Jetson AGX Orin you will see start a new terminal inside a docker image, run the command below
+
+```console
+colcon build --symlink-install --merge-install
+```

@@ -58,9 +58,9 @@ jetson_install()
     fi
 
     echo "${green}${bold}Install on NVIDIA Jetson L4T $JETSON_L4T${reset}"
-    echo " - ${green}Install required packages${reset}"
-    sudo apt install -y git-lfs python3-vcstools
     if ! command -v vcs &> /dev/null ; then
+        echo " - ${green}Install required packages${reset}"
+        sudo apt install -y git-lfs python3-vcstools
         sudo pip3 install -U vcstool
     fi
 
@@ -77,6 +77,13 @@ jetson_install()
     # https://github.com/dirk-thomas/vcstool/issues/93
     vcs import src < $project_path/isaac_demo.rosinstall --recursive
     vcs pull src
+
+    if [ ! -f $ISAAC_DEMO_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
+        echo " - ${green}Setup Isaac ROS docker image${reset}"
+        cd $ISAAC_DEMO_SRC_PATH/isaac_ros_common/scripts
+        touch .isaac_ros_common-config 
+        echo CONFIG_IMAGE_KEY=humble.nav2.realsense > .isaac_ros_common-config
+    fi
 
     echo " - ${green}Move to Isaac ROS common and run image${reset}"
     cd $ISAAC_DEMO_SRC_PATH/isaac_ros_common
