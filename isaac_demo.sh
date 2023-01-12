@@ -51,7 +51,7 @@ workstation_install()
     cd $ISAAC_SIM_ROS_PATH
     # Recursive import
     # https://github.com/dirk-thomas/vcstool/issues/93
-    vcs import src < $project_path/isaac_demo_workstation.rosinstall --recursive
+    vcs import src < $project_path/rosinstall/isaac_demo_workstation.rosinstall --recursive
     vcs pull src
 
     echo " - ${green}Start Isaac SIM simulation${reset}"
@@ -95,7 +95,7 @@ jetson_install()
     cd $ISAAC_ROS_PATH
     # Recursive import
     # https://github.com/dirk-thomas/vcstool/issues/93
-    vcs import src < $project_path/isaac_demo_jetson.rosinstall --recursive
+    vcs import src < $project_path/rosinstall/isaac_demo_jetson.rosinstall --recursive
     vcs pull src
 
     if [ ! -f $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
