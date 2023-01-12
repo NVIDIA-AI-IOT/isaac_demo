@@ -1,0 +1,3 @@
+- git:
+    local-name: isaac_ros_nvblox
+    uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox.git

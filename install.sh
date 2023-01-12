@@ -35,6 +35,7 @@ ISAAC_ROS_PATH="$(pwd)/isaac_ros-dev/ros_ws"
 ISAAC_ROS_SRC_PATH="$ISAAC_ROS_PATH/src"
 ISAAC_SIM_PATH="$HOME/.local/share/ov/pkg/isaac_sim-$ISAAC_SIM_VERSION"
 ISAAC_SIM_ROS_PATH="$ISAAC_SIM_PATH/ros2_workspace"
+ISAAC_SIM_ROS_SRC_PATH="$ISAAC_SIM_ROS_PATH/src"
 
 workstation_install()
 {
@@ -45,11 +46,19 @@ workstation_install()
 
     echo "${green}${bold}Install on Desktop${reset}"
 
+    local project_path=$(pwd)
+    echo " - ${green}Pull or update all Isaac ROS packages${reset}"
     cd $ISAAC_SIM_ROS_PATH
-    # Source 
+    # Recursive import
+    # https://github.com/dirk-thomas/vcstool/issues/93
+    vcs import src < $project_path/isaac_demo_workstation.rosinstall --recursive
+    vcs pull src
+
+    echo " - ${green}Start Isaac SIM simulation${reset}"
     # source /opt/ros/foxy/setup.bash
-    # Run Isaac ROS with Carter in a Warehoue
-    $ISAAC_SIM_PATH/python.sh
+    # https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox/blob/main/docs/tutorial-isaac-sim.md
+    # Run Isaac ROS with Carter in a Warehouse
+    $ISAAC_SIM_PATH/python.sh $ISAAC_SIM_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py
 }
 
 jetson_l4t_check()
@@ -74,11 +83,6 @@ jetson_install()
     fi
 
     echo "${green}${bold}Install on NVIDIA Jetson L4T $JETSON_L4T${reset}"
-    if ! command -v vcs &> /dev/null ; then
-        echo " - ${green}Install required packages${reset}"
-        sudo apt install -y git-lfs python3-vcstools
-        sudo pip3 install -U vcstool
-    fi
 
     if [ ! -d $ISAAC_ROS_SRC_PATH ] ; then
         echo " - ${green}Make folder $ISAAC_ROS_SRC_PATH${reset}"
@@ -91,7 +95,7 @@ jetson_install()
     cd $ISAAC_ROS_PATH
     # Recursive import
     # https://github.com/dirk-thomas/vcstool/issues/93
-    vcs import src < $project_path/isaac_demo.rosinstall --recursive
+    vcs import src < $project_path/isaac_demo_jetson.rosinstall --recursive
     vcs pull src
 
     if [ ! -f $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
@@ -167,6 +171,12 @@ main()
 
     # Request sudo password
     sudo -v
+
+    if ! command -v vcs &> /dev/null ; then
+        echo " - ${green}Install required packages${reset}"
+        sudo apt install -y git-lfs python3-vcstools
+        sudo pip3 install -U vcstool
+    fi
 
     # Run a different installation depend of the architecture
     if [[ $PLATFORM != "aarch64" ]]; then
