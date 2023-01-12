@@ -27,7 +27,8 @@ reset=`tput sgr0`
 
 # Requested version to install this set of demo on Jetson
 ISAAC_DEMO_L4T="35.1" # Jetpack 5.0.2
-ISAAC_DEMO_PATH="$(pwd)/isaac_ros-dev/ros_ws/src"
+ISAAC_DEMO_PATH="$(pwd)/isaac_ros-dev/ros_ws"
+ISAAC_DEMO_SRC_PATH="$ISAAC_DEMO_PATH/src"
 
 
 workstation_install()
@@ -58,15 +59,28 @@ jetson_install()
 
     echo "${green}${bold}Install on NVIDIA Jetson L4T $JETSON_L4T${reset}"
     echo " - ${green}Install required packages${reset}"
-    #sudo apt install -y git-lfs python3-vcstools
-
-    if [ ! -d $ISAAC_DEMO_PATH ] ; then
-        echo " - ${green}Make folder $ISAAC_DEMO_PATH${reset}"
-        mkdir -p $ISAAC_DEMO_PATH
+    sudo apt install -y git-lfs python3-vcstools
+    if ! command -v vcs &> /dev/null ; then
+        sudo pip3 install -U vcstool
     fi
 
-    echo " - ${green}Move to folder $ISAAC_DEMO_PATH${reset}"
+    if [ ! -d $ISAAC_DEMO_SRC_PATH ] ; then
+        echo " - ${green}Make folder $ISAAC_DEMO_SRC_PATH${reset}"
+        mkdir -p $ISAAC_DEMO_SRC_PATH
+    fi
+
+    local project_path=$(pwd)
+
+    echo " - ${green}Pull or update all Isaac ROS packages${reset}"
     cd $ISAAC_DEMO_PATH
+    # Recursive import
+    # https://github.com/dirk-thomas/vcstool/issues/93
+    vcs import src < $project_path/isaac_demo.rosinstall --recursive
+    vcs pull src
+
+    echo " - ${green}Move to Isaac ROS common and run image${reset}"
+    cd $ISAAC_DEMO_SRC_PATH/isaac_ros_common
+    bash scripts/run_dev.sh $ISAAC_DEMO_PATH
 }
 
 
