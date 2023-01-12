@@ -29,11 +29,22 @@ reset=`tput sgr0`
 ISAAC_DEMO_L4T="35.1" # Jetpack 5.0.2
 ISAAC_DEMO_PATH="$(pwd)/isaac_ros-dev/ros_ws"
 ISAAC_DEMO_SRC_PATH="$ISAAC_DEMO_PATH/src"
+local SILENT=false
 
 
 workstation_install()
 {
     echo "${green}${bold}Install on Desktop${reset}"
+
+    while ! $SILENT; do
+        read -p "have you installed Isaac SIM on your platform? [Y/n] " yn
+            case $yn in
+                [Yy]* ) # Break and install jetson_stats 
+                        break;;
+                [Nn]* ) exit;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
 }
 
 jetson_l4t_check()
@@ -109,7 +120,6 @@ usage()
 main()
 {
     local PLATFORM="$(uname -m)"
-    local SILENT=false
 
     # Decode all information from startup
     while [ -n "$1" ]; do
