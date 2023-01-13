@@ -107,6 +107,13 @@ jetson_install()
 
     pull_isaac_ros_packages $PROJECT_PATH/rosinstall/isaac_demo_jetson.rosinstall --recursive
 
+    echo "${green}${bold}Link this repo on $ISAAC_ROS_PATH${reset}"
+    pwd
+    exit
+    # ln -s isaac [Symbolic_Link_Path]
+
+    # echo "${green}${bold}Install on NVIDIA Jetson L4T $JETSON_L4T${reset}"
+
     if [ ! -f $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
         echo " - ${green}Setup Isaac ROS docker image${reset}"
         cd $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts
@@ -116,7 +123,7 @@ jetson_install()
 
     echo " - ${green}Move to Isaac ROS common and run image${reset}"
     cd $ISAAC_ROS_SRC_PATH/isaac_ros_common
-    bash scripts/run_dev.sh $ISAAC_ROS_PATH
+    # bash scripts/run_dev.sh $ISAAC_ROS_PATH
 }
 
 
