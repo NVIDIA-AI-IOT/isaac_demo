@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -50,7 +50,6 @@ pull_isaac_ros_packages()
     cd $ISAAC_ROS_PATH
     # Recursive import
     # https://github.com/dirk-thomas/vcstool/issues/93
-    # vcs import src < $PROJECT_PATH/rosinstall/isaac_demo_workstation.rosinstall --recursive
     vcs import src < $path
     vcs pull src
 }
@@ -80,7 +79,7 @@ workstation_install()
     echo " - ${green}Start Isaac SIM ${bold}$ISAAC_SIM_VERSION${reset}"
     echo "   ${green}Path:${reset} $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py"
     # source /opt/ros/foxy/setup.bash
-    $ISAAC_SIM_PATH/python.sh $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py
+    $ISAAC_SIM_PATH/python.sh $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py --carter_version 2
 }
 
 jetson_l4t_check()

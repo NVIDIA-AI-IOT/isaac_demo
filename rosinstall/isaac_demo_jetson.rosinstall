@@ -10,6 +10,10 @@
 - git:
     local-name: isaac_ros_visual_slam
     uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_visual_slam.git
+# Foxglove
+- git:
+    local-name: ros-foxglove-bridge
+    uri: https://github.com/foxglove/ros-foxglove-bridge.git
 # Dependency issue from Isaac ROS NVblox
 - git:
     local-name: realsense-ros
