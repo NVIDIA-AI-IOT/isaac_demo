@@ -39,5 +39,5 @@ Run the installer
 If you are on NVIDIA Jetson AGX Orin you will see start a new terminal inside a docker image, run the command below
 
 ```console
-colcon build --symlink-install --merge-install
+bash src/isaac_demo/scripts/install_in_docker.sh
 ```
