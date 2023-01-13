@@ -19,19 +19,31 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
+bold=`tput bold`
+red=`tput setaf 1`
+green=`tput setaf 2`
+yellow=`tput setaf 3`
+reset=`tput sgr0`
+
+LOCAL_PATH="/workspaces/isaac_ros-dev"
+
 main()
 {
-    if [ -d build ] ; then
-        echo "Install dependencies foxglove websocket"
+    if [ ! -d $LOCAL_PATH/install ] ; then
+        echo " - ${green}Install dependencies foxglove websocket${reset}"
         sudo apt-get update
         sudo apt-get install -y libwebsocketpp-dev
         sudo rm -rf /var/lib/apt/lists/*
         sudo apt-get clean
 
-        echo "Build Isaac ROS"
+        echo " - ${green}Build Isaac ROS${reset}"
         colcon build --symlink-install --merge-install
     else
-        echo "run packages"
+        echo " - ${green}Run isaac_demo${reset}"
+        # source workspace
+        source install/setup.bash
+        # Run demo
+        ros2 launch isaac_demo carter.launch.py
     fi
 }
 

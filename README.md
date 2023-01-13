@@ -39,5 +39,5 @@ Run the installer
 If you are on NVIDIA Jetson AGX Orin you will see start a new terminal inside a docker image, run the command below
 
 ```console
-bash src/isaac_demo/scripts/install_in_docker.sh
+bash src/isaac_demo/scripts/run_in_docker.sh
 ```
