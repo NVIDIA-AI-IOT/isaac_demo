@@ -45,7 +45,7 @@ workstation_install()
         exit 1
     fi
 
-    echo "${green}${bold}Install on Desktop${reset}"
+    echo "${green}${bold}Update/Install on desktop${reset}"
 
     echo " - ${green}Pull or update all Isaac ROS packages${reset}"
     cd $ISAAC_SIM_ROS_PATH
@@ -166,11 +166,11 @@ main()
     fi
     echo "---------------------------"
 
+    """
     while ! $SILENT; do
         read -p "Do you wish to install isaac_demo on this platform? [Y/n] " yn
             case $yn in
-                [Yy]* ) # Break and install jetson_stats 
-                        break;;
+                [Yy]* ) break;;
                 [Nn]* ) exit;;
             * ) echo "Please answer yes or no.";;
         esac
@@ -178,6 +178,7 @@ main()
 
     # Request sudo password
     sudo -v
+    """
 
     if ! command -v vcs &> /dev/null ; then
         echo " - ${green}Install required packages${reset}"
