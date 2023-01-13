@@ -21,14 +21,18 @@
 
 main()
 {
-    echo "Install dependencies foxglove websocket"
-    sudo apt-get update
-    sudo apt-get install -y libwebsocketpp-dev
-    sudo rm -rf /var/lib/apt/lists/*
-    sudo apt-get clean
+    if [ -d build ] ; then
+        echo "Install dependencies foxglove websocket"
+        sudo apt-get update
+        sudo apt-get install -y libwebsocketpp-dev
+        sudo rm -rf /var/lib/apt/lists/*
+        sudo apt-get clean
 
-    echo "Build Isaac ROS"
-    colcon build --symlink-install --merge-install
+        echo "Build Isaac ROS"
+        colcon build --symlink-install --merge-install
+    else
+        echo "run packages"
+    fi
 }
 
 main $@

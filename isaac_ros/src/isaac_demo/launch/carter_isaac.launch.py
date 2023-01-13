@@ -31,14 +31,60 @@ from launch.actions import ExecuteProcess
 
 def generate_launch_description():
 
+
+    visual_slam_node = ComposableNode(
+        name='visual_slam_node',
+        package='isaac_ros_visual_slam',
+        plugin='isaac_ros::visual_slam::VisualSlamNode',
+        remappings=[('stereo_camera/left/camera_info', '/left/camera_info'),
+                    ('stereo_camera/right/camera_info', '/right/camera_info'),
+                    ('stereo_camera/left/image', '/left/rgb'),
+                    ('stereo_camera/right/image', '/right/rgb')],
+        parameters=[{
+            'enable_rectified_pose': True,
+            'denoise_input_images': True,
+            'rectified_images': True,
+            'enable_debug_mode': False,
+            'debug_dump_path': '/tmp/elbrus',
+            'left_camera_frame': 'carter_camera_stereo_left',
+            'right_camera_frame': 'carter_camera_stereo_right',
+            'map_frame': 'map',
+            'fixed_frame': 'odom',
+            'odom_frame': 'odom',
+            'base_frame': 'base_link',
+            'current_smooth_frame': 'base_link_smooth',
+            'current_rectified_frame': 'base_link_rectified',
+            'enable_observations_view': True,
+            'enable_landmarks_view': True,
+            'enable_reading_slam_internals': True,
+            'enable_slam_visualization': True,
+            'enable_localization_n_mapping': True,
+            'use_sim_time': use_sim_time
+        }]
+    )
+    visual_slam_launch_container = ComposableNodeContainer(
+        name='visual_slam_launch_container',
+        namespace='',
+        package='rclcpp_components',
+        executable='component_container',
+        composable_node_descriptions=[
+            visual_slam_node
+        ],
+        output='screen'
+    )
+
+    # https://foxglove.dev/docs/studio/connection/ros2
+    # https://github.com/foxglove/ros-foxglove-bridge
     foxglove_bridge_node = Node(
         package='foxglove_bridge',
         executable='foxglove_bridge',
         output='screen'
     )
 
+    # Launch ROS2 packages
     ld = LaunchDescription()
-
+    
+    ld.add_action(visual_slam_launch_container)
     ld.add_action(foxglove_bridge_node)
 
     return ld
