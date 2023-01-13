@@ -31,7 +31,7 @@ ISAAC_SIM_VERSION="2022.2.0"  # Isaac SIM version
 
 # DO NOT EDIT
 
-ISAAC_ROS_PATH="$(pwd)/isaac_ros-dev/ros_ws"
+ISAAC_ROS_PATH="$(pwd)/isaac_ros"
 ISAAC_ROS_SRC_PATH="$ISAAC_ROS_PATH/src"
 ISAAC_SIM_PATH="$HOME/.local/share/ov/pkg/isaac_sim-$ISAAC_SIM_VERSION"
 ISAAC_SIM_ROS_PATH="$ISAAC_SIM_PATH/ros2_workspace"
@@ -52,6 +52,8 @@ pull_isaac_ros_packages()
     # https://github.com/dirk-thomas/vcstool/issues/93
     vcs import src < $path
     vcs pull src
+
+    cd $PROJECT_PATH
 }
 
 workstation_install()
@@ -107,13 +109,6 @@ jetson_install()
 
     pull_isaac_ros_packages $PROJECT_PATH/rosinstall/isaac_demo_jetson.rosinstall --recursive
 
-    echo "${green}${bold}Link this repo on $ISAAC_ROS_PATH${reset}"
-    pwd
-    exit
-    # ln -s isaac [Symbolic_Link_Path]
-
-    # echo "${green}${bold}Install on NVIDIA Jetson L4T $JETSON_L4T${reset}"
-
     if [ ! -f $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
         echo " - ${green}Setup Isaac ROS docker image${reset}"
         cd $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts
@@ -123,7 +118,7 @@ jetson_install()
 
     echo " - ${green}Move to Isaac ROS common and run image${reset}"
     cd $ISAAC_ROS_SRC_PATH/isaac_ros_common
-    # bash scripts/run_dev.sh $ISAAC_ROS_PATH
+    bash scripts/run_dev.sh $ISAAC_ROS_PATH
 }
 
 
