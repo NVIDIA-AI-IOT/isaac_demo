@@ -38,6 +38,23 @@ ISAAC_SIM_ROS_PATH="$ISAAC_SIM_PATH/ros2_workspace"
 ISAAC_SIM_ROS_SRC_PATH="$ISAAC_SIM_ROS_PATH/src"
 PROJECT_PATH=$(pwd)
 
+pull_isaac_ros_packages()
+{
+    local path=$1
+    if [ ! -d $ISAAC_ROS_SRC_PATH ] ; then
+        echo " - ${green}Make folder $ISAAC_ROS_SRC_PATH${reset}"
+        mkdir -p $ISAAC_ROS_SRC_PATH
+    fi
+
+    echo " - ${green}Pull or update all Isaac ROS packages${reset}"
+    cd $ISAAC_ROS_PATH
+    # Recursive import
+    # https://github.com/dirk-thomas/vcstool/issues/93
+    # vcs import src < $PROJECT_PATH/rosinstall/isaac_demo_workstation.rosinstall --recursive
+    vcs import src < $path
+    vcs pull src
+}
+
 workstation_install()
 {
     if [ ! -d $ISAAC_SIM_PATH ] ; then
@@ -46,13 +63,6 @@ workstation_install()
     fi
 
     echo "${green}${bold}Update/Install on desktop${reset}"
-
-    echo " - ${green}Pull or update all Isaac ROS packages${reset}"
-    cd $ISAAC_SIM_ROS_PATH
-    # Recursive import
-    # https://github.com/dirk-thomas/vcstool/issues/93
-    vcs import src < $PROJECT_PATH/rosinstall/isaac_demo_workstation.rosinstall --recursive
-    vcs pull src
 
     if [ -d $HOME/.ros/ ] ; then
         if [ ! -f $HOME/.ros/fastdds.xml ] ; then
@@ -63,11 +73,14 @@ workstation_install()
         echo "${bold}${red}ROS not installed${reset}"
     fi
 
-    echo " - ${green}Start Isaac SIM simulation${reset}"
-    # source /opt/ros/foxy/setup.bash
+    pull_isaac_ros_packages $PROJECT_PATH/rosinstall/isaac_demo_workstation.rosinstall --recursive
+
     # https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox/blob/main/docs/tutorial-isaac-sim.md
     # Run Isaac ROS with Carter in a Warehouse
-    $ISAAC_SIM_PATH/python.sh $ISAAC_SIM_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py
+    echo " - ${green}Start Isaac SIM ${bold}$ISAAC_SIM_VERSION${reset}"
+    echo "   ${green}Path:${reset} $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py"
+    # source /opt/ros/foxy/setup.bash
+    $ISAAC_SIM_PATH/python.sh $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py
 }
 
 jetson_l4t_check()
@@ -93,17 +106,7 @@ jetson_install()
 
     echo "${green}${bold}Install on NVIDIA Jetson L4T $JETSON_L4T${reset}"
 
-    if [ ! -d $ISAAC_ROS_SRC_PATH ] ; then
-        echo " - ${green}Make folder $ISAAC_ROS_SRC_PATH${reset}"
-        mkdir -p $ISAAC_ROS_SRC_PATH
-    fi
-
-    echo " - ${green}Pull or update all Isaac ROS packages${reset}"
-    cd $ISAAC_ROS_PATH
-    # Recursive import
-    # https://github.com/dirk-thomas/vcstool/issues/93
-    vcs import src < $PROJECT_PATH/rosinstall/isaac_demo_jetson.rosinstall --recursive
-    vcs pull src
+    pull_isaac_ros_packages $PROJECT_PATH/rosinstall/isaac_demo_jetson.rosinstall --recursive
 
     if [ ! -f $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
         echo " - ${green}Setup Isaac ROS docker image${reset}"
@@ -165,20 +168,6 @@ main()
         echo " - ${bold}Jetson L4T:${reset} ${green}$JETSON_L4T${reset}"
     fi
     echo "---------------------------"
-
-    """
-    while ! $SILENT; do
-        read -p "Do you wish to install isaac_demo on this platform? [Y/n] " yn
-            case $yn in
-                [Yy]* ) break;;
-                [Nn]* ) exit;;
-            * ) echo "Please answer yes or no.";;
-        esac
-    done
-
-    # Request sudo password
-    sudo -v
-    """
 
     if ! command -v vcs &> /dev/null ; then
         echo " - ${green}Install required packages${reset}"
