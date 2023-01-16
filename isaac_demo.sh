@@ -31,12 +31,20 @@ ISAAC_SIM_VERSION="2022.2.0"  # Isaac SIM version
 
 # DO NOT EDIT
 
-ISAAC_ROS_PATH="$(pwd)/isaac_ros"
+PROJECT_PATH=$(pwd)
+ISAAC_ROS_PATH="$PROJECT_PATH/isaac_ros"
 ISAAC_ROS_SRC_PATH="$ISAAC_ROS_PATH/src"
+ISAAC_DEMO_LOCAL_PATH="$ISAAC_ROS_SRC_PATH/isaac_demo"
 ISAAC_SIM_PATH="$HOME/.local/share/ov/pkg/isaac_sim-$ISAAC_SIM_VERSION"
 ISAAC_SIM_ROS_PATH="$ISAAC_SIM_PATH/ros2_workspace"
 ISAAC_SIM_ROS_SRC_PATH="$ISAAC_SIM_ROS_PATH/src"
-PROJECT_PATH=$(pwd)
+
+ISAAC_DEMO_ORIGINAL_PATH="$ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py"
+ISAAC_DEMO_LOCAL_SIMULATION_PATH="$ISAAC_DEMO_LOCAL_PATH/scripts/carter_warehouse.py"
+
+ISAAC_DEMO_SIMULATION_PATH=$ISAAC_DEMO_LOCAL_SIMULATION_PATH
+
+# file:// - /home/rbonghi/.local/share/ov/pkg/isaac_sim-2022.2.0/ros2_workspace/src/navigation/carter_description
 
 pull_isaac_ros_packages()
 {
@@ -79,9 +87,9 @@ workstation_install()
     # https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox/blob/main/docs/tutorial-isaac-sim.md
     # Run Isaac ROS with Carter in a Warehouse
     echo " - ${green}Start Isaac SIM ${bold}$ISAAC_SIM_VERSION${reset}"
-    echo "   ${green}Path:${reset} $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py"
+    echo "   ${green}Path:${reset} $ISAAC_DEMO_SIMULATION_PATH"
     # source /opt/ros/foxy/setup.bash
-    $ISAAC_SIM_PATH/python.sh $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py --carter_version 2
+    $ISAAC_SIM_PATH/python.sh $ISAAC_DEMO_SIMULATION_PATH --carter_version 2
 }
 
 jetson_l4t_check()
