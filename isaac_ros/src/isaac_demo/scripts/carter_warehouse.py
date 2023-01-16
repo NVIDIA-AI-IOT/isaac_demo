@@ -175,7 +175,7 @@ def configure_camera(carter_prim_path, controller, name):
 def setup_carter_sensors(carter_prim_path: str,
                          camera_focal_length_m: float = 0.009,
                          carter_version: int = 1,
-                         enable_lidar: bool = False,
+                         enable_lidar: bool = True,
                          enable_odometry: bool = False):
 
     # Set up variables based on carter version.
