@@ -37,6 +37,7 @@ ISAAC_SIM_PATH="$HOME/.local/share/ov/pkg/isaac_sim-$ISAAC_SIM_VERSION"
 ISAAC_SIM_ROS_PATH="$ISAAC_SIM_PATH/ros2_workspace"
 ISAAC_SIM_ROS_SRC_PATH="$ISAAC_SIM_ROS_PATH/src"
 PROJECT_PATH=$(pwd)
+ISAAC_DEMO_PKG_PATH="$PROJECT_PATH/isaac_ros/src/isaac_demo"
 
 pull_isaac_ros_packages()
 {
@@ -68,7 +69,7 @@ workstation_install()
     if [ -d $HOME/.ros/ ] ; then
         if [ ! -f $HOME/.ros/fastdds.xml ] ; then
             echo " - ${green}Copy Fast DDS configuration on .ros folder${reset}"
-            cp $PROJECT_PATH/fastdds.xml $HOME/.ros/fastdds.xml
+            cp $ISAAC_DEMO_PKG_PATH/scripts/fastdds.xml $HOME/.ros/fastdds.xml
         fi
     else
         echo "${bold}${red}ROS not installed${reset}"

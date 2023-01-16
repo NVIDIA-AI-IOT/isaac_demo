@@ -26,9 +26,18 @@ yellow=`tput setaf 3`
 reset=`tput sgr0`
 
 LOCAL_PATH="/workspaces/isaac_ros-dev"
+ISAAC_DEMO_PKG_PATH="$LOCAL_PATH/src/isaac_demo"
 
 main()
 {
+
+    if [ -d $HOME/.ros/ ] ; then
+        if [ ! -f $HOME/.ros/fastdds.xml ] ; then
+            echo " - ${green}Copy Fast DDS configuration on .ros folder${reset}"
+            cp $ISAAC_DEMO_PKG_PATH/scripts/fastdds.xml $HOME/.ros/fastdds.xml
+        fi
+    fi
+
     if [ ! -d $LOCAL_PATH/install ] ; then
         echo " - ${green}Install dependencies foxglove websocket${reset}"
         sudo apt-get update
