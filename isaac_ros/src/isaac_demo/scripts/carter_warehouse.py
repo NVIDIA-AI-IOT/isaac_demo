@@ -32,76 +32,6 @@ def stage_units_to_camera_units(length_in_stage_units: float) -> float:
     return length_in_stage_units / camera_lengths_in_stage_units
 
 
-def setup_carter_sensors(carter_prim_path: str,
-                         camera_focal_length_m: float = 0.009,
-                         carter_version: int = 1):
-
-    # Set up variables based on carter version.
-    left_cam_path = 'chassis_link/camera_mount/carter_camera_stereo_left'
-    right_cam_path = 'chassis_link/camera_mount/carter_camera_stereo_right'
-    stereo_offset = [-175.92, 0]
-
-    if carter_version == 2:
-        left_cam_path = (
-            'chassis_link/stereo_cam_left/stereo_cam_left_sensor_frame/'
-            'camera_sensor_left')
-        right_cam_path = (
-            'chassis_link/stereo_cam_right/stereo_cam_right_sensor_frame/'
-            'camera_sensor_right')
-        stereo_offset = [-175.92, 0]
-
-    import omni
-    from pxr import Sdf
-
-    # Enable
-    # Change the focal length of the camera (default in the carter model quite narrow).
-    camera_focal_length_in_camera_units = stage_units_to_camera_units(
-        meters_to_stage_units(camera_focal_length_m))
-
-    omni.kit.commands.execute(
-        'ChangeProperty',
-        prop_path=Sdf.Path(f'{carter_prim_path}/{left_cam_path}.focalLength'),
-        value=camera_focal_length_in_camera_units,
-        prev=None)
-    omni.kit.commands.execute(
-        'ChangeProperty',
-        prop_path=Sdf.Path(f'{carter_prim_path}/{right_cam_path}.focalLength'),
-        value=camera_focal_length_in_camera_units,
-        prev=None)
-
-    # Modify the omnigraph to get lidar point cloud published
-
-    import omni.graph.core as og
-    keys = og.Controller.Keys
-    controller = og.Controller()
-
-    enable_lidar = False
-    enable_odometry = False
-
-    if not enable_odometry:
-        # Remove odometry from Carter
-        og.Controller.edit(f'{carter_prim_path}/ActionGraph',
-                           {keys.DELETE_NODES: ['isaac_compute_odometry_node',
-                                                'ros2_publish_odometry',
-                                                'ros2_publish_raw_transform_tree',
-                                                #'ros2_publish_transform_tree_01',
-                                                ]})
-
-    if enable_lidar:
-        configure_lidar(carter_prim_path, controller)
-    else:
-        # Remove laser scan
-        og.Controller.edit(f'{carter_prim_path}/ActionGraph',
-                           {keys.DELETE_NODES: ['isaac_read_lidar_beams_node', 'ros2_publish_laser_scan']})
-
-    # Configure left camera
-    configure_camera(carter_prim_path, controller, 'left')
-    # Configure right camera
-    right_info = configure_camera(carter_prim_path, controller, 'right')
-    # Set attribute
-    right_info.get_attribute('inputs:stereoOffset').set(stereo_offset)
-
-
 def configure_lidar(carter_prim_path, controller):
     # Lidar setup
     carter_lidar_path = 'chassis_link/carter_lidar'
@@ -240,6 +170,75 @@ def configure_camera(carter_prim_path, controller, name):
         enable.get_attribute('inputs:condition').set(True)
 
     return info
+
+
+def setup_carter_sensors(carter_prim_path: str,
+                         camera_focal_length_m: float = 0.009,
+                         carter_version: int = 1,
+                         enable_lidar: bool = False,
+                         enable_odometry: bool = False):
+
+    # Set up variables based on carter version.
+    left_cam_path = 'chassis_link/camera_mount/carter_camera_stereo_left'
+    right_cam_path = 'chassis_link/camera_mount/carter_camera_stereo_right'
+    stereo_offset = [-175.92, 0]
+
+    if carter_version == 2:
+        left_cam_path = (
+            'chassis_link/stereo_cam_left/stereo_cam_left_sensor_frame/'
+            'camera_sensor_left')
+        right_cam_path = (
+            'chassis_link/stereo_cam_right/stereo_cam_right_sensor_frame/'
+            'camera_sensor_right')
+        stereo_offset = [-175.92, 0]
+
+    import omni
+    from pxr import Sdf
+
+    # Enable
+    # Change the focal length of the camera (default in the carter model quite narrow).
+    camera_focal_length_in_camera_units = stage_units_to_camera_units(
+        meters_to_stage_units(camera_focal_length_m))
+
+    omni.kit.commands.execute(
+        'ChangeProperty',
+        prop_path=Sdf.Path(f'{carter_prim_path}/{left_cam_path}.focalLength'),
+        value=camera_focal_length_in_camera_units,
+        prev=None)
+    omni.kit.commands.execute(
+        'ChangeProperty',
+        prop_path=Sdf.Path(f'{carter_prim_path}/{right_cam_path}.focalLength'),
+        value=camera_focal_length_in_camera_units,
+        prev=None)
+
+    # Modify the omnigraph to get lidar point cloud published
+
+    import omni.graph.core as og
+    keys = og.Controller.Keys
+    controller = og.Controller()
+
+    if not enable_odometry:
+        # Remove odometry from Carter
+        og.Controller.edit(f'{carter_prim_path}/ActionGraph',
+                           {keys.DELETE_NODES: ['isaac_compute_odometry_node',
+                                                'ros2_publish_odometry',
+                                                'ros2_publish_raw_transform_tree',
+                                                # 'ros2_publish_transform_tree_01',
+                                                ]})
+
+    if enable_lidar:
+        configure_lidar(carter_prim_path, controller)
+    else:
+        # Remove laser scan
+        og.Controller.edit(f'{carter_prim_path}/ActionGraph',
+                           {keys.DELETE_NODES: ['isaac_read_lidar_beams_node', 'ros2_publish_laser_scan']})
+
+    # Configure left camera
+    configure_camera(carter_prim_path, controller, 'left')
+    # Configure right camera
+    right_info = configure_camera(carter_prim_path, controller, 'right')
+    # Set attribute
+    right_info.get_attribute('inputs:stereoOffset').set(stereo_offset)
 
 
 def setup_forklifts_collision():
