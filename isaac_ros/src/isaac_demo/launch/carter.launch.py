@@ -32,8 +32,12 @@ from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
-    
-    use_sim_time = LaunchConfiguration('use_sim_time', default='True')
+
+    use_sim_time = LaunchConfiguration('use_sim_time',
+                                       default='True')
+
+    nvblox_param_dir = LaunchConfiguration('nvblox_params_file',
+                                           default=os.path.join(get_package_share_directory('nvblox_nav2'), 'params', 'nvblox.yaml'),)
 
     use_sim_dec = DeclareLaunchArgument(
         'use_sim_time', default_value='True',
@@ -46,12 +50,14 @@ def generate_launch_description():
         remappings=[('stereo_camera/left/camera_info', '/left/camera_info'),
                     ('stereo_camera/right/camera_info', '/right/camera_info'),
                     ('stereo_camera/left/image', '/left/rgb'),
-                    ('stereo_camera/right/image', '/right/rgb')],
+                    ('stereo_camera/right/image', '/right/rgb'),
+                    ('tf', '/tf')],
         parameters=[{
-            'enable_rectified_pose': True,
-            'denoise_input_images': True,
+            'enable_rectified_pose': False,
+            'denoise_input_images': False,
             'rectified_images': True,
             'enable_debug_mode': False,
+            'enable_imu': False,
             'debug_dump_path': '/tmp/elbrus',
             'left_camera_frame': 'carter_camera_stereo_left',
             'right_camera_frame': 'carter_camera_stereo_right',
@@ -66,6 +72,8 @@ def generate_launch_description():
             'enable_reading_slam_internals': True,
             'enable_slam_visualization': True,
             'enable_localization_n_mapping': True,
+            # 'publish_odom_to_base_tf': False,
+            # 'publish_map_to_odom_tf': False,
             'use_sim_time': use_sim_time
         }]
     )
@@ -80,6 +88,18 @@ def generate_launch_description():
         output='screen'
     )
 
+    nvblox_node = Node(
+        package='nvblox_ros', executable='nvblox_node',
+        parameters=[nvblox_param_dir, {'use_sim_time': use_sim_time,
+                                       'global_frame': 'odom'}],
+        output='screen',
+        remappings=[('depth/image', '/left/depth'),
+                    ('depth/camera_info', '/left/camera_info'),
+                    ('color/image', '/left/rgb'),
+                    ('color/camera_info', '/left/camera_info'),
+                    ('pointcloud', '/point_cloud'),
+                    ])
+
     # https://foxglove.dev/docs/studio/connection/ros2
     # https://github.com/foxglove/ros-foxglove-bridge
     foxglove_bridge_node = Node(
@@ -88,12 +108,23 @@ def generate_launch_description():
         # output='screen'
     )
 
+    cmd_wrapper_fix_node = Node(
+        package='cmd_wrapper',
+        executable='cmd_wrapper',
+        output='screen'
+    )
+
     # Launch ROS2 packages
     ld = LaunchDescription()
-
+    # Definitions
     ld.add_action(use_sim_dec)
-    ld.add_action(visual_slam_launch_container)
+    # Foxglove
     ld.add_action(foxglove_bridge_node)
+    # vSLAM and NVBLOX
+    ld.add_action(visual_slam_launch_container)
+    ld.add_action(nvblox_node)
+    # Command sender TMP
+    ld.add_action(cmd_wrapper_fix_node)
 
     return ld
 # EOF
