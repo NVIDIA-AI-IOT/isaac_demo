@@ -30,6 +30,14 @@ ISAAC_DEMO_PKG_PATH="$LOCAL_PATH/src/isaac_demo"
 
 main()
 {
+    local LIBWEBSOCKETPP_PKG=$(dpkg -l 2>/dev/null | grep -m1 "libwebsocketpp")
+    if [ -z "$LIBWEBSOCKETPP_PKG" ] ; then
+        echo " - ${green}Install dependencies foxglove websocket${reset}"
+        sudo apt-get update
+        sudo apt-get install -y libwebsocketpp-dev
+        sudo rm -rf /var/lib/apt/lists/*
+        sudo apt-get clean
+    fi
 
     if [ -d $HOME/.ros/ ] ; then
         if [ ! -f $HOME/.ros/fastdds.xml ] ; then
@@ -39,21 +47,15 @@ main()
     fi
 
     if [ ! -d $LOCAL_PATH/install ] ; then
-        echo " - ${green}Install dependencies foxglove websocket${reset}"
-        sudo apt-get update
-        sudo apt-get install -y libwebsocketpp-dev
-        sudo rm -rf /var/lib/apt/lists/*
-        sudo apt-get clean
-
         echo " - ${green}Build Isaac ROS${reset}"
         colcon build --symlink-install --merge-install
-    else
-        echo " - ${green}Run isaac_demo${reset}"
-        # source workspace
-        source install/setup.bash
-        # Run demo
-        ros2 launch isaac_demo carter.launch.py
     fi
+    
+    echo " - ${green}Run isaac_demo${reset}"
+    # source workspace
+    source install/setup.bash
+    # Run demo
+    ros2 launch isaac_demo carter.launch.py
 }
 
 main $@
