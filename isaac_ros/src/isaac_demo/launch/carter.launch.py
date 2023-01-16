@@ -85,7 +85,7 @@ def generate_launch_description():
     foxglove_bridge_node = Node(
         package='foxglove_bridge',
         executable='foxglove_bridge',
-        output='screen'
+        # output='screen'
     )
 
     # Launch ROS2 packages

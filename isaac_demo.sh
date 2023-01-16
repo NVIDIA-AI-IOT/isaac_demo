@@ -39,6 +39,7 @@ ISAAC_SIM_PATH="$HOME/.local/share/ov/pkg/isaac_sim-$ISAAC_SIM_VERSION"
 ISAAC_SIM_ROS_PATH="$ISAAC_SIM_PATH/ros2_workspace"
 ISAAC_SIM_ROS_SRC_PATH="$ISAAC_SIM_ROS_PATH/src"
 
+# Load demo from file
 ISAAC_DEMO_ORIGINAL_PATH="$ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py"
 ISAAC_DEMO_LOCAL_SIMULATION_PATH="$ISAAC_DEMO_LOCAL_PATH/scripts/carter_warehouse.py"
 
@@ -76,7 +77,7 @@ workstation_install()
     if [ -d $HOME/.ros/ ] ; then
         if [ ! -f $HOME/.ros/fastdds.xml ] ; then
             echo " - ${green}Copy Fast DDS configuration on .ros folder${reset}"
-            cp $PROJECT_PATH/fastdds.xml $HOME/.ros/fastdds.xml
+            cp $ISAAC_DEMO_LOCAL_PATH/scripts/fastdds.xml $HOME/.ros/fastdds.xml
         fi
     else
         echo "${bold}${red}ROS not installed${reset}"
