@@ -33,6 +33,9 @@ from launch.actions import ExecuteProcess
 
 def generate_launch_description():
 
+    nav2_bringup_launch_dir = os.path.join(
+        get_package_share_directory('nav2_bringup'), 'launch')
+
     use_sim_time = LaunchConfiguration('use_sim_time',
                                        default='True')
 
@@ -40,8 +43,27 @@ def generate_launch_description():
                                            default=os.path.join(get_package_share_directory('nvblox_nav2'), 'params', 'nvblox.yaml'),)
 
     use_sim_dec = DeclareLaunchArgument(
-        'use_sim_time', default_value='True',
+        'use_sim_time',
+        default_value='True',
         description='Use simulation (Omniverse Isaac Sim) clock if true')
+
+    params_file_arg = DeclareLaunchArgument(
+        'params_file',
+        default_value=os.path.join(get_package_share_directory(
+            'nvblox_nav2'), 'params', 'carter_nav2.yaml'),
+        description='Full path to param file to load')
+
+    use_depth_arg = DeclareLaunchArgument(
+        'use_depth',
+        default_value='True',
+        description='Use depth as an input for nvblox reconstruction'
+    )
+
+    use_lidar_arg = DeclareLaunchArgument(
+        'use_lidar',
+        default_value='True',
+        description='Use lidar as an input for nvblox reconstruction'
+    )
 
     visual_slam_node = ComposableNode(
         name='visual_slam_node',
@@ -88,17 +110,40 @@ def generate_launch_description():
         output='screen'
     )
 
+    # nvblox_node = Node(
+    #    package='nvblox_ros', executable='nvblox_node',
+    #    parameters=[nvblox_param_dir,
+    #                {'use_sim_time': use_sim_time,
+    #                 'global_frame': 'odom'}],
+    #    output='screen',
+    #    remappings=[('depth/image', '/left/depth'),
+    #                ('depth/camera_info', '/left/camera_info'),
+    #                ('color/image', '/left/rgb'),
+    #                ('color/camera_info', '/left/camera_info'),
+    #                ('pointcloud', '/point_cloud'),
+    #                ])
+
     nvblox_node = Node(
         package='nvblox_ros', executable='nvblox_node',
-        parameters=[nvblox_param_dir, {'use_sim_time': use_sim_time,
-                                       'global_frame': 'odom'}],
+        parameters=[nvblox_param_dir,
+                    {'use_sim_time': use_sim_time,
+                     # 'global_frame': 'odom',
+                     'use_depth': LaunchConfiguration('use_depth'),
+                     'use_lidar': LaunchConfiguration('use_lidar')}],
         output='screen',
         remappings=[('depth/image', '/left/depth'),
                     ('depth/camera_info', '/left/camera_info'),
                     ('color/image', '/left/rgb'),
                     ('color/camera_info', '/left/camera_info'),
-                    ('pointcloud', '/point_cloud'),
+                    ('pointcloud', '/point_cloud')
                     ])
+
+    nav2_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(nav2_bringup_launch_dir, 'navigation_launch.py')),
+        launch_arguments={'use_sim_time': LaunchConfiguration('use_sim_time'),
+                          'params_file': LaunchConfiguration('params_file'),
+                          'autostart': 'True'}.items())
 
     # https://foxglove.dev/docs/studio/connection/ros2
     # https://github.com/foxglove/ros-foxglove-bridge
@@ -117,6 +162,9 @@ def generate_launch_description():
     # Launch ROS2 packages
     ld = LaunchDescription()
     # Definitions
+    ld.add_action(use_depth_arg)
+    ld.add_action(params_file_arg)
+    ld.add_action(use_lidar_arg)
     ld.add_action(use_sim_dec)
     # Foxglove
     ld.add_action(foxglove_bridge_node)
@@ -125,6 +173,8 @@ def generate_launch_description():
     ld.add_action(nvblox_node)
     # Command sender TMP
     ld.add_action(cmd_wrapper_fix_node)
+    # Navigation tool
+    # ld.add_action(nav2_launch)
 
     return ld
 # EOF

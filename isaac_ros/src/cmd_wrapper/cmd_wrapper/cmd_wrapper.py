@@ -35,7 +35,7 @@ class MinimalPublisher(Node):
         #msg = String()
         #msg.data = 'Hello World: %d' % self.i
         msg = Twist()
-        msg.angular.z = 0.5
+        msg.angular.z = 0.9
         self.publisher_.publish(msg)
         #self.get_logger().info(f"Message {self.i}")
         self.i += 1
