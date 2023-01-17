@@ -23,11 +23,11 @@ Tools:
 1. Router
 2. eth cables
 
-## Install
+# Install
 
 There are two steps to follow, Install FoxGlove and Install Isaac ROS
 
-### Foxglove
+## Foxglove
 
 Download the latest [foxglove](https://foxglove.dev/download) version for ARM64
 
@@ -52,15 +52,11 @@ Run the installer
 ./isaac_demo.sh
 ```
 
-If you are on NVIDIA Jetson AGX Orin you will see start a new terminal inside a docker image, run the command below
+# Run demo
 
-```console
-bash src/isaac_demo/scripts/run_in_docker.sh
-```
+From your workstation now you need to do two extra steps
 
-Well done! Now all demo is running!
-
-# Setup foxglove
+## Setup foxglove
 
 1. Open foxglove
 2. Set up **Open connection**
@@ -70,3 +66,13 @@ Well done! Now all demo is running!
 3. Select **ROS2** and **Open**
 
 ![Foxglove ROS2](.docs/02-foxglove-connection.png)
+
+## Run simulation on Jetson
+
+If you are on NVIDIA Jetson AGX Orin you will see start a new terminal inside a docker image, run the command below
+
+```console
+bash src/isaac_demo/scripts/run_in_docker.sh
+```
+
+Well done! Now all demo is running!
