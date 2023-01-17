@@ -51,9 +51,24 @@ main()
         colcon build --symlink-install --merge-install
     fi
     
-    echo " - ${green}Download model${reset}"
-    cd $LOCAL_PATH/src/isaac_ros_object_detection/isaac_ros_detectnet
-    ./scripts/setup_model.sh --height 632 --width 1200 --config-file resources/quickstart_config.pbtxt
+    #echo " - ${green}Download model${reset}"
+    #cd $LOCAL_PATH/src/isaac_ros_object_detection/isaac_ros_detectnet
+    #./scripts/setup_model.sh --height 632 --width 1200 --config-file resources/quickstart_config.pbtxt
+
+    if [ ! -d $LOCAL_PATH/bi3d ] ; then
+        echo " - ${green}Download models for isaac_ros_proximity_segmentation${reset}"
+        mkdir -p bi3d
+        cd bi3d
+        wget 'https://api.ngc.nvidia.com/v2/models/nvidia/isaac/bi3d_proximity_segmentation/versions/2.0.0/files/featnet.onnx'
+        wget 'https://api.ngc.nvidia.com/v2/models/nvidia/isaac/bi3d_proximity_segmentation/versions/2.0.0/files/segnet.onnx'
+
+        # Build models
+        echo " - ${green}Build models for isaac_ros_proximity_segmentation${reset}"
+        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_featnet.plan --onnx=$LOCAL_PATH/bi3d/featnet.onnx --int8 --useDLACore=0
+        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_segnet.plan --onnx=$LOCAL_PATH/bi3d/segnet.onnx --int8 --useDLACore=0
+
+        cd $LOCAL_PATH
+    fi
 
     echo " - ${green}Run isaac_demo${reset}"
     # source workspace
