@@ -1,4 +1,4 @@
-![isaac_demo](doc/images/isaac_demo.gif)
+![isaac_demo](.doc/images/isaac_demo.gif)
 
 # isaac_demo
 
