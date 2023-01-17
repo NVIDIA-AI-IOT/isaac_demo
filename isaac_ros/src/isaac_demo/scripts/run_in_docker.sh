@@ -51,6 +51,10 @@ main()
         colcon build --symlink-install --merge-install
     fi
     
+    echo " - ${green}Download model${reset}"
+    cd $LOCAL_PATH/src/isaac_ros_object_detection/isaac_ros_detectnet
+    ./scripts/setup_model.sh --height 632 --width 1200 --config-file resources/quickstart_config.pbtxt
+
     echo " - ${green}Run isaac_demo${reset}"
     # source workspace
     source install/setup.bash

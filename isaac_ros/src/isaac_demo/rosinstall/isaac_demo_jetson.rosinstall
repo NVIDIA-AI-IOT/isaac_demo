@@ -13,6 +13,12 @@
 - git:
     local-name: isaac_ros_apriltag
     uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_apriltag.git
+- git:
+    local-name: isaac_ros_dnn_inference
+    uri: git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_dnn_inference.git
+- git:
+    local-name: isaac_ros_object_detection
+    uri: git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_object_detection.git
 # Foxglove
 - git:
     local-name: ros-foxglove-bridge
