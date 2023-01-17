@@ -1,4 +1,4 @@
-![isaac_demo](.doc/images/isaac_demo.gif)
+![isaac_demo](.docs/isaac_demo.gif)
 
 # isaac_demo
 
@@ -25,6 +25,20 @@ Tools:
 
 ## Install
 
+There are two steps to follow, Install FoxGlove and Install Isaac ROS
+
+### Foxglove
+
+Download the latest [foxglove](https://foxglove.dev/download) version for ARM64
+
+```console
+sudo apt install ./foxglove-studio-*.deb
+sudo apt update
+sudo apt install -y foxglove-studio
+```
+
+## Isaac SIM and Isaac DEMO
+
 Clone this repository and move
 
 ```console
@@ -45,3 +59,14 @@ bash src/isaac_demo/scripts/run_in_docker.sh
 ```
 
 Well done! Now all demo is running!
+
+# Setup foxglove
+
+1. Open foxglove
+2. Set up **Open connection**
+
+![Foxglove setup connection](.docs/01-foxglove-setup-connection.png)
+
+3. Select **ROS2** and **Open**
+
+![Foxglove ROS2](.docs/02-foxglove-connection.png)
