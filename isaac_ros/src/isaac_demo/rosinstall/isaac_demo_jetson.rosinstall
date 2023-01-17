@@ -8,6 +8,9 @@
     local-name: isaac_ros_nvblox
     uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox.git
 - git:
+    local-name: isaac_ros_image_pipeline
+    uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_image_pipeline.git
+- git:
     local-name: isaac_ros_visual_slam
     uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_visual_slam.git
 - git:
@@ -15,10 +18,13 @@
     uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_apriltag.git
 - git:
     local-name: isaac_ros_dnn_inference
-    uri: git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_dnn_inference.git
+    uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_dnn_inference.git
 - git:
     local-name: isaac_ros_object_detection
-    uri: git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_object_detection.git
+    uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_object_detection.git
+- git:
+    local-name: isaac_ros_proximity_segmentation
+    uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_proximity_segmentation.git
 # Foxglove
 - git:
     local-name: ros-foxglove-bridge
