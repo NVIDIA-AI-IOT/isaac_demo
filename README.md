@@ -1,3 +1,5 @@
+![isaac_demo](doc/images/isaac_demo.gif)
+
 # isaac_demo
 
 A combined set of demo working with Isaac SIM on a workstation and Isaac ROS on a NVIDIA Jetson AGX Orin
@@ -26,8 +28,8 @@ Tools:
 Clone this repository and move
 
 ```console
-git clone ...
-cd ...
+git clone https://github.com/rbonghi/isaac_demo.git
+cd isaac_demo
 ```
 
 Run the installer
@@ -41,3 +43,5 @@ If you are on NVIDIA Jetson AGX Orin you will see start a new terminal inside a 
 ```console
 bash src/isaac_demo/scripts/run_in_docker.sh
 ```
+
+Well done! Now all demo is running!
