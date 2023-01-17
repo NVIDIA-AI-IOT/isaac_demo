@@ -83,7 +83,7 @@ workstation_install()
         echo "${bold}${red}ROS not installed${reset}"
     fi
 
-    pull_isaac_ros_packages $PROJECT_PATH/rosinstall/isaac_demo_workstation.rosinstall --recursive
+    pull_isaac_ros_packages $ISAAC_DEMO_LOCAL_PATH/rosinstall/isaac_demo_workstation.rosinstall
 
     # https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox/blob/main/docs/tutorial-isaac-sim.md
     # Run Isaac ROS with Carter in a Warehouse
@@ -116,7 +116,7 @@ jetson_install()
 
     echo "${green}${bold}Install on NVIDIA Jetson L4T $JETSON_L4T${reset}"
 
-    pull_isaac_ros_packages $PROJECT_PATH/rosinstall/isaac_demo_jetson.rosinstall
+    pull_isaac_ros_packages $ISAAC_DEMO_LOCAL_PATH/rosinstall/isaac_demo_jetson.rosinstall
 
     if [ ! -f $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
         echo " - ${green}Setup Isaac ROS docker image${reset}"

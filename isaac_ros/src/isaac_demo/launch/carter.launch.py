@@ -31,6 +31,14 @@ from launch import LaunchDescription
 from launch.actions import ExecuteProcess
 
 
+# detect all 36h11 tags
+cfg_36h11 = {
+    'image_transport': 'raw',
+    'family': '36h11',
+    'size': 0.162
+}
+
+
 def generate_launch_description():
 
     nav2_bringup_launch_dir = os.path.join(
@@ -41,6 +49,8 @@ def generate_launch_description():
 
     nvblox_param_dir = LaunchConfiguration('nvblox_params_file',
                                            default=os.path.join(get_package_share_directory('nvblox_nav2'), 'params', 'nvblox.yaml'),)
+
+    ############# ROS2 DECLARATIONS #############
 
     use_sim_dec = DeclareLaunchArgument(
         'use_sim_time',
@@ -63,6 +73,18 @@ def generate_launch_description():
         'use_lidar',
         default_value='True',
         description='Use lidar as an input for nvblox reconstruction'
+    )
+
+    ############# ROS2 NODES #############
+
+    apriltag_node = ComposableNode(
+        name='apriltag',
+        package='isaac_ros_apriltag',
+        plugin='isaac_ros::apriltag::AprilTagNode',
+        remappings=[('camera/image_rect', '/left/rgb'),
+                    ('camera/camera_info', '/left/camera_info'),
+                    ('tf', '/tf')],
+        parameters=[cfg_36h11],
     )
 
     visual_slam_node = ComposableNode(
@@ -99,29 +121,17 @@ def generate_launch_description():
             'use_sim_time': use_sim_time
         }]
     )
-    visual_slam_launch_container = ComposableNodeContainer(
-        name='visual_slam_launch_container',
+    isaac_ros_launch_container = ComposableNodeContainer(
+        name='isaac_ros_launch_container',
         namespace='',
         package='rclcpp_components',
         executable='component_container',
         composable_node_descriptions=[
-            visual_slam_node
+            visual_slam_node,
+            apriltag_node
         ],
         output='screen'
     )
-
-    # nvblox_node = Node(
-    #    package='nvblox_ros', executable='nvblox_node',
-    #    parameters=[nvblox_param_dir,
-    #                {'use_sim_time': use_sim_time,
-    #                 'global_frame': 'odom'}],
-    #    output='screen',
-    #    remappings=[('depth/image', '/left/depth'),
-    #                ('depth/camera_info', '/left/camera_info'),
-    #                ('color/image', '/left/rgb'),
-    #                ('color/camera_info', '/left/camera_info'),
-    #                ('pointcloud', '/point_cloud'),
-    #                ])
 
     nvblox_node = Node(
         package='nvblox_ros', executable='nvblox_node',
@@ -159,6 +169,8 @@ def generate_launch_description():
         output='screen'
     )
 
+    ############################
+
     # Launch ROS2 packages
     ld = LaunchDescription()
     # Definitions
@@ -171,10 +183,10 @@ def generate_launch_description():
     # vSLAM and NVBLOX
     ld.add_action(visual_slam_launch_container)
     ld.add_action(nvblox_node)
-    # Command sender TMP
-    ld.add_action(cmd_wrapper_fix_node)
     # Navigation tool
     # ld.add_action(nav2_launch)
+    # Command sender TMP
+    ld.add_action(cmd_wrapper_fix_node)
 
     return ld
 # EOF
