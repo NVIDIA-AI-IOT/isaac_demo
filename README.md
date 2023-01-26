@@ -9,9 +9,10 @@ A combined set of demo working with Isaac SIM on a workstation and Isaac ROS on 
 Workstation:
 
 1. x86/64 machine
-2. NVIDIA Graphic card with RTX
-3. Display
-4. Keyboard and Mouse
+2. Install Ubuntu 20.04
+3. NVIDIA Graphic card with RTX
+4. Display
+5. Keyboard and Mouse
 
 NVIDIA Jetson:
 
