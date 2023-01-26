@@ -47,6 +47,7 @@ main()
     fi
 
     if [ ! -d $LOCAL_PATH/install ] ; then
+        sudo python3 -m pip install -U pip "setuptools<66.0.0"
         echo " - ${green}Build Isaac ROS${reset}"
         colcon build --symlink-install --merge-install
     fi

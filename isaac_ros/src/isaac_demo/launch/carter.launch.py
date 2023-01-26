@@ -289,7 +289,7 @@ def generate_launch_description():
     # Navigation tool
     # ld.add_action(nav2_launch)
     # Command sender TMP
-    # ld.add_action(cmd_wrapper_fix_node)
+    ld.add_action(cmd_wrapper_fix_node)
 
     return ld
 # EOF
