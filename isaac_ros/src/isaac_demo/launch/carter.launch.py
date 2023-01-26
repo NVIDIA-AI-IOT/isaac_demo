@@ -188,7 +188,7 @@ def generate_launch_description():
                 'featnet_engine_file_path': featnet_engine_file_path,
                 'segnet_engine_file_path': segnet_engine_file_path,
                 'max_disparity_values': max_disparity_values,
-                'use_sim_time': True}],
+                'use_sim_time': use_sim_time}],
         remappings=[('bi3d_node/bi3d_output', 'bi3d_mask'),
                     ('left_image_bi3d', 'rgb_left'),
                     ('right_image_bi3d', 'rgb_right')]
@@ -243,7 +243,7 @@ def generate_launch_description():
     nav2_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(nav2_bringup_launch_dir, 'navigation_launch.py')),
-        launch_arguments={'use_sim_time': LaunchConfiguration('use_sim_time'),
+        launch_arguments={'use_sim_time': use_sim_time,
                           'params_file': LaunchConfiguration('params_file'),
                           'autostart': 'True'}.items())
 
