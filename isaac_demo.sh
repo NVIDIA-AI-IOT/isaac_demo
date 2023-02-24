@@ -109,7 +109,7 @@ jetson_l4t_check()
 jetson_install()
 {
     local JETSON_L4T=$(jetson_l4t_check)
-    if [[ $JETSON_L4T != $ISAAC_DEMO_ROS_L4T ]] ; then
+    if [[ "$(printf '%s\n' "$JETSON_L4T" "$ISAAC_DEMO_ROS_L4T" | sort -V | head -n1)" != "$JETSON_L4T" ]]; then
         echo "${bold}${red}You cannot install isaac_demo on this Jetpack with L4T $JETSON_L4T need L4T $ISAAC_DEMO_ROS_L4T${reset}"
         exit 1
     fi
