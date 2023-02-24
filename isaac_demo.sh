@@ -26,7 +26,7 @@ yellow=`tput setaf 3`
 reset=`tput sgr0`
 
 # Requested version to install this set of demo on Jetson
-ISAAC_DEMO_ROS_L4T="35.1" # 35.1 = Jetpack 5.0.2
+ISAAC_DEMO_ROS_L4T="35.2" # 35.1 = Jetpack 5.0.2
 ISAAC_SIM_VERSION="2022.2.0"  # Isaac SIM version
 
 # DO NOT EDIT
@@ -181,7 +181,7 @@ main()
 
     if ! command -v vcs &> /dev/null ; then
         echo " - ${green}Install required packages${reset}"
-        sudo apt install -y git-lfs python3-vcstools
+        sudo apt install -y git-lfs python3-vcstools python3-pip
         sudo pip3 install -U vcstool
     fi
 
