@@ -135,6 +135,52 @@ Now follow the Run demo to start the simulation
 
 From your workstation now you need to do two extra steps
 
+## Start Isaac SIM
+
+Start the NVIDIA Isaac SIM from script
+
+Open a terminal on your workstation and write
+
+```console
+cd isaac_demo
+./isaac_demo.sh
+```
+
+Now this script initialize and run NVIDIA Isaac SIM, after a while you see a new window with Isaac SIM running
+
+![Isaac SIM demo running](.docs/isaac_sim_running.png)
+
+After this step you can complete to run the demo on your NVIDIA Jetson.
+
+## Run simulation on Jetson
+
+If you close your terminal on the installation, you can reopen with:
+
+```console
+ssh <IP or hostname.local>
+```
+
+where **IP** is the of NVIDIA Jetson or **hostname** is the hostname of your board.
+
+and run
+
+```console
+cd isaac_demo
+./isaac_demo.sh
+```
+
+Wait this script run the docker terminal, like the image below
+
+![Isaac Demo installed on Orin](.docs/isaac_demo_install_orin.png)
+
+Now you can run the script below
+
+```console
+bash src/isaac_demo/scripts/run_in_docker.sh
+```
+
+Well done! Now the Isaac ROS is running on your Jetson
+
 ## Setup foxglove
 
 1. Open foxglove
@@ -142,17 +188,36 @@ From your workstation now you need to do two extra steps
 
 ![Foxglove setup connection](.docs/01-foxglove-setup-connection.png)
 
-3. Select **ROS2** and **Open**
+3. Select **Foxglove WebSocket** and **Open**
 
 ![Foxglove ROS2](.docs/02-foxglove-connection.png)
 
-## Run simulation on Jetson
-
-If you are on NVIDIA Jetson AGX Orin you will see start a new terminal inside a docker image, run the command below
-
+4. Write on **WebSocket URL**
 
 ```console
-bash src/isaac_demo/scripts/run_in_docker.sh
+ws://<IP or hostname.local>:8765
 ```
 
-Well done! Now all demo is running!
+where **IP** is the of NVIDIA Jetson or **hostname** is the hostname of your board.
+
+5. Setup Layout
+
+Press on "Import layout" icon and after on top press the button **Import layout**
+
+![Import layout page](.docs/03-foxglove-import-layout.png)
+
+Select the layout on: **isaac_demo/foxglove/Default.json**
+
+6. Output running
+
+![Foxglove running](.docs/04-foxglove-running.png)
+
+You can drive the robot directly from the foxglove joystick
+
+# Troubleshooting
+
+If Isaac SIM on your workstation show this message
+
+![Isaac SIM install](.docs/warning-isaac-sim-desktop.png)
+
+just wait! :-)
