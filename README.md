@@ -1,6 +1,6 @@
-![isaac_demo](.docs/isaac_demo.gif)
-
 # isaac_demo
+
+![isaac_demo](.docs/isaac_demo.gif)
 
 A combined set of demo working with Isaac SIM on a workstation and Isaac ROS on a NVIDIA Jetson AGX Orin
 
@@ -24,7 +24,7 @@ Tools:
 1. Router
 2. eth cables
 
-# Setup hardware
+## Setup hardware
 
 Before to start check you have all requirements and connect the driver following this image
 
@@ -32,7 +32,7 @@ Before to start check you have all requirements and connect the driver following
 
 It is preferable to connect workstation and the NVIDIA Jetson AGX Orin with a lan cable and not use WiFi.
 
-# Install
+## Install
 
 There are two steps to follow, Install FoxGlove and Install Isaac ROS
 
@@ -41,12 +41,13 @@ Follow:
 * Install on Jetson
 * Install on workstation
 
-## Install on NVIDIA Jetson Orin
+### Install on NVIDIA Jetson Orin
 
 Install on your NVIDIA Jetson Orin [Jetpack 5+](https://developer.nvidia.com/embedded/jetpack)
 
 After installation save IP address and hostname
-### Connect remotely
+
+#### Connect remotely
 
 In this section you connect to your NVIDIA Jetson with a ssh connection, open a terminal an write
 
@@ -60,7 +61,7 @@ If you are connected the output from the terminal is:
 
 ![ssh-terminal-orin.png](.docs/ssh-terminal-orin.png)
 
-### Install Isaac Demo
+#### Install Isaac Demo
 
 Clone this repository and move to repository folder
 
@@ -85,7 +86,7 @@ If everything is going well (need time before to be done) the terminal will show
 
 ![Isaac Demo installed on Orin](.docs/isaac_demo_install_orin.png)
 
-## Install on workstation
+### Install on workstation
 
 In this first part, you install different software on your workstation.
 
@@ -93,7 +94,7 @@ In this first part, you install different software on your workstation.
 * Foxglove
 * This repository
 
-### NVIDIA Isaac SIM
+#### NVIDIA Isaac SIM
 
 Follow the documentation on NVIDIA Isaac SIM [Workstation install](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/install_workstation.html)
 
@@ -110,7 +111,7 @@ Move to Library and choice "Omniverse Isaac SIM" and download the latest 2022.2 
 
 ![Omniverse library](https://docs.omniverse.nvidia.com/app_isaacsim/_images/isaac_main_launcher_library.png)
 
-### Foxglove on Desktop
+#### Foxglove on Desktop
 
 Download the latest [foxglove](https://foxglove.dev/download) version for your desktop
 
@@ -120,7 +121,7 @@ sudo apt update
 sudo apt install -y foxglove-studio
 ```
 
-### Isaac SIM and Isaac DEMO
+#### Isaac SIM and Isaac DEMO
 
 Clone this repository and move to repository folder
 
@@ -131,11 +132,11 @@ cd isaac_demo
 
 Now follow the Run demo to start the simulation
 
-# Run demo
+## Run demo
 
 From your workstation now you need to do two extra steps
 
-## Start Isaac SIM
+### Start Isaac SIM
 
 Start the NVIDIA Isaac SIM from script
 
@@ -152,7 +153,7 @@ Now this script initialize and run NVIDIA Isaac SIM, after a while you see a new
 
 After this step you can complete to run the demo on your NVIDIA Jetson.
 
-## Run simulation on Jetson
+### Run simulation on Jetson
 
 If you close your terminal on the installation, you can reopen with:
 
@@ -181,7 +182,7 @@ bash src/isaac_demo/scripts/run_in_docker.sh
 
 Well done! Now the Isaac ROS is running on your Jetson
 
-## Setup foxglove
+### Setup foxglove
 
 1. Open foxglove
 2. Set up **Open connection**
@@ -214,7 +215,7 @@ Select the layout on: **isaac_demo/foxglove/Default.json**
 
 You can drive the robot directly from the foxglove joystick
 
-# Troubleshooting
+## Troubleshooting
 
 If Isaac SIM on your workstation show this message
 
