@@ -1,0 +1,186 @@
+{
+  "configById": {
+    "3D!4iyfhib": {
+      "cameraState": {
+        "perspective": true,
+        "distance": 9.265824603184306,
+        "phi": 60.4142727681981,
+        "thetaOffset": 40.41058204337104,
+        "targetOffset": [
+          0.3906741296256598,
+          1.1496451943333987,
+          2.634354355641442e-16
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "followTf": "map",
+      "scene": {
+        "transforms": {
+          "showLabel": false
+        }
+      },
+      "transforms": {
+        "frame:base_link": {
+          "visible": true
+        },
+        "frame:chassis_link": {
+          "visible": false
+        },
+        "frame:com_offset": {
+          "visible": false
+        },
+        "frame:imu": {
+          "visible": false
+        },
+        "frame:left_wheel_link": {
+          "visible": false
+        },
+        "frame:rear_pivot_link": {
+          "visible": false
+        },
+        "frame:rear_wheel_link": {
+          "visible": false
+        },
+        "frame:right_wheel_link": {
+          "visible": false
+        },
+        "frame:carter_lidar": {
+          "visible": false
+        },
+        "frame:carter_camera_stereo_right": {
+          "visible": true
+        },
+        "frame:carter_camera_stereo_left": {
+          "visible": true
+        }
+      },
+      "topics": {
+        "/visual_slam/vis/landmarks_cloud": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo",
+          "pointSize": 15,
+          "pointShape": "circle"
+        },
+        "/visual_slam/tracking/vo_pose": {
+          "visible": false
+        },
+        "/nvblox_node/mesh_marker": {
+          "visible": true
+        },
+        "/nvblox_node/map_slice_bounds": {
+          "visible": true
+        },
+        "/scan": {
+          "visible": true,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        },
+        "/freespace_segmentation/occupancy_grid": {
+          "visible": true
+        },
+        "/point_cloud": {
+          "visible": false,
+          "colorField": "x",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        },
+        "/move_base_simple/goal": {
+          "visible": true
+        },
+        "/plan": {
+          "visible": true
+        }
+      },
+      "layers": {
+        "aab6b527-497e-4295-b139-813730e51d02": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "aab6b527-497e-4295-b139-813730e51d02",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "order": 1
+        }
+      },
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      }
+    },
+    "Teleop!y3w2vd": {
+      "topic": "/cmd_vel",
+      "publishRate": 1,
+      "upButton": {
+        "field": "linear-x",
+        "value": 0.8
+      },
+      "downButton": {
+        "field": "linear-x",
+        "value": -0.8
+      },
+      "leftButton": {
+        "field": "angular-z",
+        "value": 0.5
+      },
+      "rightButton": {
+        "field": "angular-z",
+        "value": -0.5
+      }
+    },
+    "RosOut!udeyj": {
+      "searchTerms": [],
+      "minLogLevel": 1
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "layout": {
+    "first": "3D!4iyfhib",
+    "second": {
+      "direction": "row",
+      "first": "Teleop!y3w2vd",
+      "second": "RosOut!udeyj",
+      "splitPercentage": 70.38645217546015
+    },
+    "direction": "column",
+    "splitPercentage": 62.94117647058823
+  }
+}
