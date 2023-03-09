@@ -34,7 +34,17 @@ main()
     if [ -z "$LIBWEBSOCKETPP_PKG" ] ; then
         echo " - ${green}Install dependencies foxglove websocket${reset}"
         sudo apt-get update
-        sudo apt-get install -y libwebsocketpp-dev
+        sudo apt-get install -y libwebsocketpp-dev 
+        sudo rm -rf /var/lib/apt/lists/*
+        sudo apt-get clean
+    fi
+
+    local TESTRESOURCES_PKG=$(dpkg -l 2>/dev/null | grep -m1 "python3-testresources")
+    if [ -z "$TESTRESOURCES_PKG" ] ; then
+        echo " - ${green}Install dependencies testresources${reset}"
+        sudo apt-get update
+        sudo apt-get install -y python3-testresources
+        sudo python3 -m pip install -U pip "setuptools<66.0.0"
         sudo rm -rf /var/lib/apt/lists/*
         sudo apt-get clean
     fi
@@ -47,7 +57,6 @@ main()
     fi
 
     if [ ! -d $LOCAL_PATH/install ] ; then
-        sudo python3 -m pip install -U pip "setuptools<66.0.0"
         echo " - ${green}Build Isaac ROS${reset}"
         colcon build --symlink-install --merge-install
     fi

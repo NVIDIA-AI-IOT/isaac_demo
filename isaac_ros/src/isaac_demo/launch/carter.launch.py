@@ -42,6 +42,9 @@ cfg_36h11 = {
 
 def generate_launch_description():
 
+    pkg_description = get_package_share_directory('carter_description')
+    pkg_isaac_demo = get_package_share_directory('isaac_demo')
+
     nav2_bringup_launch_dir = os.path.join(
         get_package_share_directory('nav2_bringup'), 'launch')
 
@@ -49,7 +52,7 @@ def generate_launch_description():
                                        default='True')
 
     nvblox_param_dir = LaunchConfiguration('nvblox_params_file',
-                                           default=os.path.join(get_package_share_directory('nvblox_nav2'), 'params', 'nvblox.yaml'),)
+                                           default=os.path.join(get_package_share_directory('isaac_demo'), 'params', 'nvblox.yaml'),)
 
     # Bi3DNode parameters
     featnet_engine_file_path = LaunchConfiguration('featnet_engine_file_path')
@@ -153,6 +156,7 @@ def generate_launch_description():
                     ('stereo_camera/right/camera_info', '/right/camera_info'),
                     ('stereo_camera/left/image', '/left/rgb'),
                     ('stereo_camera/right/image', '/right/rgb'),
+                    ('visual_slam/tracking/odometry', '/odom'),
                     ('tf', '/tf')],
         parameters=[{
             'enable_rectified_pose': False,
@@ -164,7 +168,7 @@ def generate_launch_description():
             'left_camera_frame': 'carter_camera_stereo_left',
             'right_camera_frame': 'carter_camera_stereo_right',
             'map_frame': 'map',
-            'fixed_frame': 'odom',
+            'fixed_frame': 'map',
             'odom_frame': 'odom',
             'base_frame': 'base_link',
             'current_smooth_frame': 'base_link_smooth',
@@ -217,8 +221,8 @@ def generate_launch_description():
         composable_node_descriptions=[
             visual_slam_node,
             apriltag_node,
-            bi3d_node,
-            freespace_segmentation_node,
+            #bi3d_node,
+            #freespace_segmentation_node,
         ],
         output='screen'
     )
@@ -227,7 +231,7 @@ def generate_launch_description():
         package='nvblox_ros', executable='nvblox_node',
         parameters=[nvblox_param_dir,
                     {'use_sim_time': use_sim_time,
-                     # 'global_frame': 'odom',
+                     'global_frame': 'odom',
                      'use_depth': LaunchConfiguration('use_depth'),
                      'use_lidar': LaunchConfiguration('use_lidar')}],
         output='screen',
@@ -261,6 +265,12 @@ def generate_launch_description():
         output='screen'
     )
 
+    # include another launch file in nanosaur namespace
+    # https://docs.ros.org/en/foxy/How-To-Guides/Launch-file-different-formats.html
+    description_launch = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([pkg_description, '/launch/description.launch.py']),
+            )
+
     ############################
 
     # Launch ROS2 packages
@@ -280,6 +290,8 @@ def generate_launch_description():
     ld.add_action(grid_height_arg)
     ld.add_action(grid_width_arg)
     ld.add_action(grid_resolution_arg)
+    # carter description launch
+    ld.add_action(description_launch)
     # Foxglove
     ld.add_action(foxglove_bridge_node)
     # Isaac ROS container
@@ -287,9 +299,9 @@ def generate_launch_description():
     # vSLAM and NVBLOX
     ld.add_action(nvblox_node)
     # Navigation tool
-    # ld.add_action(nav2_launch)
+    ld.add_action(nav2_launch)
     # Command sender TMP
-    ld.add_action(cmd_wrapper_fix_node)
+    # ld.add_action(cmd_wrapper_fix_node)
 
     return ld
 # EOF

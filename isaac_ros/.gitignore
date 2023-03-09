@@ -6,5 +6,7 @@ log/
 src/isaac_ros_*
 src/realsense-ros
 src/ros-foxglove-bridge
+src/navigation
+src/xacro
 # models
 bi3d

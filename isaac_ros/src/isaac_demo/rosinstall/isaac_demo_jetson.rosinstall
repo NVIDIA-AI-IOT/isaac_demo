@@ -34,3 +34,7 @@
     local-name: realsense-ros
     version: ros2-development
     uri: https://github.com/IntelRealSense/realsense-ros.git
+- git:
+    local-name: xacro
+    version: ros2
+    uri: https://github.com/ros/xacro.git
