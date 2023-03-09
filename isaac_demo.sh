@@ -25,6 +25,7 @@ green=`tput setaf 2`
 yellow=`tput setaf 3`
 reset=`tput sgr0`
 
+RVIZ_RUN=false
 # Requested version to install this set of demo on Jetson
 ISAAC_DEMO_ROS_L4T="35.2" # 35.1 = Jetpack 5.0.2
 ISAAC_SIM_VERSION="2022.2.0"  # Isaac SIM version
@@ -85,6 +86,12 @@ workstation_install()
 
     pull_isaac_ros_packages $ISAAC_DEMO_LOCAL_PATH/rosinstall/isaac_demo_workstation.rosinstall
 
+    if $RVIZ_RUN ; then
+        echo " - ${green}Move to Isaac ROS common and run image${reset}"
+        cd $ISAAC_ROS_SRC_PATH/isaac_ros_common
+        gnome-terminal -e "bash scripts/run_dev.sh $ISAAC_ROS_PATH"
+    fi
+
     # https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox/blob/main/docs/tutorial-isaac-sim.md
     # Run Isaac ROS with Carter in a Warehouse
     echo " - ${green}Start Isaac SIM ${bold}$ISAAC_SIM_VERSION${reset}"
@@ -142,6 +149,7 @@ usage()
     echo "$name [options]" >&2
     echo "${bold}options:${reset}" >&2
     echo "   -y                   | Run this script silent" >&2
+    echo "   --rviz               | Run rviz2 on desktop" >&2
     echo "   -h|--help            | This help" >&2
 }
 
@@ -157,6 +165,9 @@ main()
             -h|--help) # Load help
                 usage
                 exit 0
+                ;;
+            --rviz)
+                RVIZ_RUN=true
                 ;;
             -y)
                 SILENT=true

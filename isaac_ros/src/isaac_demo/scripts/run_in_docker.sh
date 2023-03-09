@@ -28,17 +28,67 @@ reset=`tput sgr0`
 LOCAL_PATH="/workspaces/isaac_ros-dev"
 ISAAC_DEMO_PKG_PATH="$LOCAL_PATH/src/isaac_demo"
 
-main()
+run_desktop()
+{
+    if [ ! -d $LOCAL_PATH/install ] ; then
+        echo " - ${green}Build Isaac ROS${reset}"
+        colcon build --symlink-install --merge-install --packages-up-to nvblox_rviz_plugin carter_description
+    fi
+    
+    echo " - ${green}Run rviz2${reset}"
+    # source workspace
+    source install/setup.bash
+    # Run demo
+    rviz2
+}
+
+
+run_jetson()
 {
     local LIBWEBSOCKETPP_PKG=$(dpkg -l 2>/dev/null | grep -m1 "libwebsocketpp")
     if [ -z "$LIBWEBSOCKETPP_PKG" ] ; then
         echo " - ${green}Install dependencies foxglove websocket${reset}"
         sudo apt-get update
-        sudo apt-get install -y libwebsocketpp-dev 
+        sudo apt-get install -y libwebsocketpp-dev
         sudo rm -rf /var/lib/apt/lists/*
         sudo apt-get clean
     fi
+    
+    #echo " - ${green}Download model${reset}"
+    #cd $LOCAL_PATH/src/isaac_ros_object_detection/isaac_ros_detectnet
+    #./scripts/setup_model.sh --height 632 --width 1200 --config-file resources/quickstart_config.pbtxt
+    
+    if [ ! -d $LOCAL_PATH/bi3d ] ; then
+        echo " - ${green}Download models for isaac_ros_proximity_segmentation${reset}"
+        mkdir -p bi3d
+        cd bi3d
+        wget 'https://api.ngc.nvidia.com/v2/models/nvidia/isaac/bi3d_proximity_segmentation/versions/2.0.0/files/featnet.onnx'
+        wget 'https://api.ngc.nvidia.com/v2/models/nvidia/isaac/bi3d_proximity_segmentation/versions/2.0.0/files/segnet.onnx'
+        
+        # Build models
+        echo " - ${green}Build models for isaac_ros_proximity_segmentation${reset}"
+        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_featnet.plan --onnx=$LOCAL_PATH/bi3d/featnet.onnx --int8 --useDLACore=0
+        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_segnet.plan --onnx=$LOCAL_PATH/bi3d/segnet.onnx --int8 --useDLACore=0
+        
+        cd $LOCAL_PATH
+    fi
+    
+    if [ ! -d $LOCAL_PATH/install ] ; then
+        echo " - ${green}Build Isaac ROS${reset}"
+        colcon build --symlink-install --merge-install
+    fi
+    
+    echo " - ${green}Run isaac_demo${reset}"
+    # source workspace
+    source install/setup.bash
+    # Run demo
+    ros2 launch isaac_demo carter.launch.py
+}
 
+
+main()
+{
+    
     local TESTRESOURCES_PKG=$(dpkg -l 2>/dev/null | grep -m1 "python3-testresources")
     if [ -z "$TESTRESOURCES_PKG" ] ; then
         echo " - ${green}Install dependencies testresources${reset}"
@@ -48,44 +98,21 @@ main()
         sudo rm -rf /var/lib/apt/lists/*
         sudo apt-get clean
     fi
-
+    
     if [ -d $HOME/.ros/ ] ; then
         if [ ! -f $HOME/.ros/fastdds.xml ] ; then
             echo " - ${green}Copy Fast DDS configuration on .ros folder${reset}"
             cp $ISAAC_DEMO_PKG_PATH/scripts/fastdds.xml $HOME/.ros/fastdds.xml
         fi
     fi
-
-    if [ ! -d $LOCAL_PATH/install ] ; then
-        echo " - ${green}Build Isaac ROS${reset}"
-        colcon build --symlink-install --merge-install
-    fi
     
-    #echo " - ${green}Download model${reset}"
-    #cd $LOCAL_PATH/src/isaac_ros_object_detection/isaac_ros_detectnet
-    #./scripts/setup_model.sh --height 632 --width 1200 --config-file resources/quickstart_config.pbtxt
-
-    if [ ! -d $LOCAL_PATH/bi3d ] ; then
-        echo " - ${green}Download models for isaac_ros_proximity_segmentation${reset}"
-        mkdir -p bi3d
-        cd bi3d
-        wget 'https://api.ngc.nvidia.com/v2/models/nvidia/isaac/bi3d_proximity_segmentation/versions/2.0.0/files/featnet.onnx'
-        wget 'https://api.ngc.nvidia.com/v2/models/nvidia/isaac/bi3d_proximity_segmentation/versions/2.0.0/files/segnet.onnx'
-
-        # Build models
-        echo " - ${green}Build models for isaac_ros_proximity_segmentation${reset}"
-        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_featnet.plan --onnx=$LOCAL_PATH/bi3d/featnet.onnx --int8 --useDLACore=0
-        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_segnet.plan --onnx=$LOCAL_PATH/bi3d/segnet.onnx --int8 --useDLACore=0
-
-        cd $LOCAL_PATH
+    if [[ $PLATFORM != "aarch64" ]]; then
+        run_desktop
+    else
+        run_jetson
     fi
-
-    echo " - ${green}Run isaac_demo${reset}"
-    # source workspace
-    source install/setup.bash
-    # Run demo
-    ros2 launch isaac_demo carter.launch.py
 }
+
 
 main $@
 # EOF
