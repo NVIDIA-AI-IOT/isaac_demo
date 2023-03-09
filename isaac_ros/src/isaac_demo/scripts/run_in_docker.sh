@@ -88,7 +88,7 @@ run_jetson()
 
 main()
 {
-    
+    local PLATFORM="$(uname -m)"
     local TESTRESOURCES_PKG=$(dpkg -l 2>/dev/null | grep -m1 "python3-testresources")
     if [ -z "$TESTRESOURCES_PKG" ] ; then
         echo " - ${green}Install dependencies testresources${reset}"
