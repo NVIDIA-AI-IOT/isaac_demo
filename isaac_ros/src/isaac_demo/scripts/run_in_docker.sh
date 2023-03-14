@@ -39,7 +39,7 @@ run_desktop()
     # source workspace
     source install/setup.bash
     # Run demo
-    rviz2
+    rviz2 -d $ISAAC_DEMO_PKG_PATH/rviz/carter.rviz
 }
 
 
