@@ -63,6 +63,13 @@ pull_isaac_ros_packages()
     vcs import src < $path --recursive
     vcs pull src
 
+    # fix nvblox
+    cd $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox
+    if [[ $(git rev-parse --abbrev-ref HEAD) != "hotfix/eigen_hash" ]]; then
+        echo " - ${yellow}Fix nvblox eigen (temp fix, before official release)${reset}"
+        git checkout hotfix/eigen_hash
+    fi
+
     cd $PROJECT_PATH
 }
 
