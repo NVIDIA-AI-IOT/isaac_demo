@@ -25,7 +25,8 @@ green=`tput setaf 2`
 yellow=`tput setaf 3`
 reset=`tput sgr0`
 
-RVIZ_RUN=false
+RVIZ_RUN=true
+FOXGLOVE_RUN=false
 # Requested version to install this set of demo on Jetson
 ISAAC_DEMO_ROS_L4T="35.3" # 35.1 = Jetpack 5.0.2
 ISAAC_SIM_VERSION="2022.2.1"  # Isaac SIM version
@@ -156,7 +157,8 @@ usage()
     echo "$name [options]" >&2
     echo "${bold}options:${reset}" >&2
     echo "   -y                   | Run this script silent" >&2
-    echo "   --rviz               | Run rviz2 on desktop" >&2
+    echo "   --rviz               | Run rviz2 on desktop (default)" >&2
+    echo "   --foxglove           | Run foxglove on desktop" >&2
     echo "   -h|--help            | This help" >&2
 }
 
@@ -175,6 +177,9 @@ main()
                 ;;
             --rviz)
                 RVIZ_RUN=true
+                ;;
+            --foxglove)
+                FOXGLOVE_RUN=true
                 ;;
             -y)
                 SILENT=true
