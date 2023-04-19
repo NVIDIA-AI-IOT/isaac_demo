@@ -42,8 +42,8 @@ ISAAC_SIM_ROS_PATH="$ISAAC_SIM_PATH/ros2_workspace"
 ISAAC_SIM_ROS_SRC_PATH="$ISAAC_SIM_ROS_PATH/src"
 
 # Load demo from file
-ISAAC_DEMO_ORIGINAL_PATH="$ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_isaac_sim/omniverse_scripts/carter_warehouse.py"
-ISAAC_DEMO_LOCAL_SIMULATION_PATH="$ISAAC_DEMO_LOCAL_PATH/scripts/carter_warehouse.py"
+ISAAC_DEMO_ORIGINAL_PATH="$ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox_examples/nvblox_isaac_sim/omniverse_scripts/start_isaac_sim.py"
+ISAAC_DEMO_LOCAL_SIMULATION_PATH="$ISAAC_DEMO_LOCAL_PATH/scripts/start_isaac_sim.py"
 
 ISAAC_DEMO_SIMULATION_PATH=$ISAAC_DEMO_LOCAL_SIMULATION_PATH
 
@@ -63,13 +63,6 @@ pull_isaac_ros_packages()
     # https://github.com/dirk-thomas/vcstool/issues/93
     vcs import src < $path --recursive
     vcs pull src
-
-    # fix nvblox
-    #cd $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox
-    #if [[ $(git rev-parse --abbrev-ref HEAD) != "hotfix/eigen_hash" ]]; then
-    #    echo " - ${yellow}Fix nvblox eigen (temp fix, before official release)${reset}"
-    #    git checkout hotfix/eigen_hash
-    #fi
 
     cd $PROJECT_PATH
 }
@@ -105,7 +98,7 @@ workstation_install()
     echo " - ${green}Start Isaac SIM ${bold}$ISAAC_SIM_VERSION${reset}"
     echo "   ${green}Path:${reset} $ISAAC_DEMO_SIMULATION_PATH"
     # source /opt/ros/foxy/setup.bash
-    $ISAAC_SIM_PATH/python.sh $ISAAC_DEMO_SIMULATION_PATH --carter_version 2
+    $ISAAC_SIM_PATH/python.sh $ISAAC_DEMO_SIMULATION_PATH
 }
 
 jetson_l4t_check()

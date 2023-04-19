@@ -86,7 +86,7 @@
       <visual>
          <origin rpy="1.57057 0 0" xyz="0 0 0" />
          <geometry>
-            <mesh filename="package://carter_description/urdf/meshes/caster_wheel.stl" />
+            <mesh filename="package://carter_description/urdf/meshes/caster_wheel.obj" />
          </geometry>
       </visual>
       <collision>

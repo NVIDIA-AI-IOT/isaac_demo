@@ -117,7 +117,7 @@ Visualization Manager:
       Class: nvblox_rviz_plugin/NvbloxMesh
       Cut Ceiling: false
       Enabled: true
-      Mesh Color: Color + Shading
+      Mesh Color: Color
       Name: NvbloxMesh
       Topic:
         Depth: 5
@@ -271,10 +271,74 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        base_link:
+          Value: true
+        carter_camera_stereo_left:
+          Value: true
+        carter_camera_stereo_right:
+          Value: true
+        carter_lidar:
+          Value: true
+        chassis_link:
+          Value: true
+        com_offset:
+          Value: true
+        imu:
+          Value: true
+        left_wheel_link:
+          Value: true
+        odom:
+          Value: true
+        rear_pivot_link:
+          Value: true
+        rear_wheel_link:
+          Value: true
+        right_wheel_link:
+          Value: true
+        tag36h11:0:
+          Value: true
+        tag36h11:2:
+          Value: true
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: false
+      Tree:
+        odom:
+          base_link:
+            chassis_link:
+              carter_camera_stereo_left:
+                tag36h11:0:
+                  {}
+                tag36h11:2:
+                  {}
+              carter_camera_stereo_right:
+                {}
+              carter_lidar:
+                {}
+              com_offset:
+                {}
+              imu:
+                {}
+              left_wheel_link:
+                {}
+              rear_pivot_link:
+                rear_wheel_link:
+                  {}
+              right_wheel_link:
+                {}
+      Update Interval: 0
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: map
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -317,25 +381,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 8.279264450073242
+      Distance: 5.786248683929443
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -1.1117078065872192
-        Y: -1.4480491876602173
-        Z: 1.2252075672149658
+        X: 0.9657711982727051
+        Y: -1.1410746574401855
+        Z: 1.7069222927093506
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.630398154258728
+      Pitch: 0.6803981065750122
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.605416774749756
+      Yaw: 3.860421895980835
     Saved: ~
 Window Geometry:
   Displays:
@@ -353,5 +417,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1436
-  X: 1193
-  Y: 1181
+  X: 899
+  Y: 619
