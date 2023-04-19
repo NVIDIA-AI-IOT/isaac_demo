@@ -65,11 +65,11 @@ pull_isaac_ros_packages()
     vcs pull src
 
     # fix nvblox
-    cd $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox
-    if [[ $(git rev-parse --abbrev-ref HEAD) != "hotfix/eigen_hash" ]]; then
-        echo " - ${yellow}Fix nvblox eigen (temp fix, before official release)${reset}"
-        git checkout hotfix/eigen_hash
-    fi
+    #cd $ISAAC_ROS_SRC_PATH/isaac_ros_nvblox/nvblox
+    #if [[ $(git rev-parse --abbrev-ref HEAD) != "hotfix/eigen_hash" ]]; then
+    #    echo " - ${yellow}Fix nvblox eigen (temp fix, before official release)${reset}"
+    #    git checkout hotfix/eigen_hash
+    #fi
 
     cd $PROJECT_PATH
 }
@@ -137,7 +137,7 @@ jetson_install()
         echo " - ${green}Setup Isaac ROS docker image${reset}"
         cd $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts
         touch .isaac_ros_common-config 
-        echo CONFIG_IMAGE_KEY=humble.nav2.realsense > .isaac_ros_common-config
+        echo CONFIG_IMAGE_KEY=ros2_humble.realsense > .isaac_ros_common-config
     fi
 
     echo " - ${green}Move to Isaac ROS common and run image${reset}"
