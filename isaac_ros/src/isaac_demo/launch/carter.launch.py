@@ -32,17 +32,12 @@ from launch.actions import ExecuteProcess
 
 
 LOCAL_PATH = "/workspaces/isaac_ros-dev"
-# detect all 36h11 tags
-cfg_36h11 = {
-    'image_transport': 'raw',
-    'family': '36h11',
-    'size': 0.162
-}
 
 
 def generate_launch_description():
 
     pkg_description = get_package_share_directory('carter_description')
+    bringup_dir = get_package_share_directory('nvblox_examples_bringup')
     pkg_isaac_demo = get_package_share_directory('isaac_demo')
 
     nav2_bringup_launch_dir = os.path.join(
@@ -141,26 +136,27 @@ def generate_launch_description():
     apriltag_node = ComposableNode(
         name='apriltag',
         package='isaac_ros_apriltag',
-        plugin='isaac_ros::apriltag::AprilTagNode',
-        remappings=[('camera/image_rect', '/left/rgb'),
-                    ('camera/camera_info', '/left/camera_info'),
-                    ('tf', '/tf')],
-        parameters=[cfg_36h11],
+        plugin='nvidia::isaac_ros::apriltag::AprilTagNode',
+        remappings=[('/image', '/front/stereo_camera/left/rgb'),
+                    ('/camera_info', '/front/stereo_camera/left/camera_info'),
+                    ],
+        parameters=[{'size': 0.32,
+                     'max_tags': 64}],
     )
 
     visual_slam_node = ComposableNode(
         name='visual_slam_node',
         package='isaac_ros_visual_slam',
         plugin='isaac_ros::visual_slam::VisualSlamNode',
-        remappings=[('stereo_camera/left/camera_info', '/left/camera_info'),
-                    ('stereo_camera/right/camera_info', '/right/camera_info'),
-                    ('stereo_camera/left/image', '/left/rgb'),
-                    ('stereo_camera/right/image', '/right/rgb'),
+        remappings=[('stereo_camera/left/camera_info', '/front/stereo_camera/left/camera_info'),
+                    ('stereo_camera/right/camera_info', '/front/stereo_camera/right/camera_info'),
+                    ('stereo_camera/left/image', '/front/stereo_camera/left/rgb'),
+                    ('stereo_camera/right/image', '/front/stereo_camera/right/rgb'),
                     ('visual_slam/tracking/odometry', '/odom'),
-                    ('tf', '/tf')],
+                    ],
         parameters=[{
-            'enable_rectified_pose': False,
-            'denoise_input_images': False,
+            # 'enable_rectified_pose': False,
+            'denoise_input_images': True,
             'rectified_images': True,
             'enable_debug_mode': False,
             'enable_imu': False,
@@ -168,7 +164,7 @@ def generate_launch_description():
             'left_camera_frame': 'carter_camera_stereo_left',
             'right_camera_frame': 'carter_camera_stereo_right',
             'map_frame': 'map',
-            'fixed_frame': 'map',
+            'fixed_frame': 'odom',
             'odom_frame': 'odom',
             'base_frame': 'base_link',
             'current_smooth_frame': 'base_link_smooth',
@@ -179,7 +175,7 @@ def generate_launch_description():
             'enable_slam_visualization': True,
             'enable_localization_n_mapping': True,
             # 'publish_odom_to_base_tf': False,
-            # 'publish_map_to_odom_tf': False,
+            'publish_map_to_odom_tf': False,
             'use_sim_time': use_sim_time
         }]
     )
@@ -227,29 +223,17 @@ def generate_launch_description():
         output='screen'
     )
 
-    nvblox_node = Node(
-        package='nvblox_ros', executable='nvblox_node',
-        parameters=[nvblox_param_dir,
-                    {'use_sim_time': use_sim_time,
-                     'global_frame': 'odom',
-                     'use_depth': LaunchConfiguration('use_depth'),
-                     'use_lidar': LaunchConfiguration('use_lidar')}],
-        output='screen',
-        remappings=[('depth/image', '/left/depth'),
-                    ('depth/camera_info', '/left/camera_info'),
-                    ('color/image', '/left/rgb'),
-                    ('color/camera_info', '/left/camera_info'),
-                    ('pointcloud', '/point_cloud')
-                    ])
-
     ############# OTHER ROS2 NODES #######
 
     nav2_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(nav2_bringup_launch_dir, 'navigation_launch.py')),
-        launch_arguments={'use_sim_time': use_sim_time,
-                          'params_file': LaunchConfiguration('params_file'),
-                          'autostart': 'True'}.items())
+        PythonLaunchDescriptionSource(os.path.join(
+            bringup_dir, 'launch', 'nav2', 'nav2_isaac_sim.launch.py')))
+
+    # Nvblox
+    nvblox_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(bringup_dir, 'launch', 'nvblox', 'nvblox.launch.py')]),
+        launch_arguments={'setup_for_isaac_sim': 'True'}.items())
 
     # https://foxglove.dev/docs/studio/connection/ros2
     # https://github.com/foxglove/ros-foxglove-bridge
@@ -293,15 +277,13 @@ def generate_launch_description():
     # carter description launch
     ld.add_action(description_launch)
     # Foxglove
-    ld.add_action(foxglove_bridge_node)
+    #ld.add_action(foxglove_bridge_node)
     # Isaac ROS container
     ld.add_action(isaac_ros_launch_container)
     # vSLAM and NVBLOX
-    ld.add_action(nvblox_node)
+    ld.add_action(nvblox_launch)
     # Navigation tool
     ld.add_action(nav2_launch)
-    # Command sender TMP
-    # ld.add_action(cmd_wrapper_fix_node)
 
     return ld
 # EOF

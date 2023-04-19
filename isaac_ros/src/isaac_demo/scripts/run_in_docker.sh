@@ -89,15 +89,15 @@ run_jetson()
 main()
 {
     local PLATFORM="$(uname -m)"
-    local TESTRESOURCES_PKG=$(dpkg -l 2>/dev/null | grep -m1 "python3-testresources")
-    if [ -z "$TESTRESOURCES_PKG" ] ; then
-        echo " - ${green}Install dependencies testresources${reset}"
-        sudo apt-get update
-        sudo apt-get install -y python3-testresources
-        sudo python3 -m pip install -U pip "setuptools<66.0.0"
-        sudo rm -rf /var/lib/apt/lists/*
-        sudo apt-get clean
-    fi
+    #local TESTRESOURCES_PKG=$(dpkg -l 2>/dev/null | grep -m1 "python3-testresources")
+    #if [ -z "$TESTRESOURCES_PKG" ] ; then
+    #    echo " - ${green}Install dependencies testresources${reset}"
+    #    sudo apt-get update
+    #    sudo apt-get install -y python3-testresources
+    #    sudo python3 -m pip install -U pip "setuptools<66.0.0"
+    #    sudo rm -rf /var/lib/apt/lists/*
+    #    sudo apt-get clean
+    #fi
     
     if [ -d $HOME/.ros/ ] ; then
         if [ ! -f $HOME/.ros/fastdds.xml ] ; then
