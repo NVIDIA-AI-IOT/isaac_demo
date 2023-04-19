@@ -40,14 +40,8 @@ def generate_launch_description():
     bringup_dir = get_package_share_directory('nvblox_examples_bringup')
     pkg_isaac_demo = get_package_share_directory('isaac_demo')
 
-    nav2_bringup_launch_dir = os.path.join(
-        get_package_share_directory('nav2_bringup'), 'launch')
-
     use_sim_time = LaunchConfiguration('use_sim_time',
                                        default='True')
-
-    nvblox_param_dir = LaunchConfiguration('nvblox_params_file',
-                                           default=os.path.join(get_package_share_directory('isaac_demo'), 'params', 'nvblox.yaml'),)
 
     # Bi3DNode parameters
     featnet_engine_file_path = LaunchConfiguration('featnet_engine_file_path')
@@ -55,8 +49,6 @@ def generate_launch_description():
     max_disparity_values = LaunchConfiguration('max_disparity_values')
 
     # FreespaceSegmentationNode parameters
-    base_link_frame = LaunchConfiguration('base_link_frame')
-    camera_frame = LaunchConfiguration('camera_frame')
     f_x_ = LaunchConfiguration('f_x')
     f_y_ = LaunchConfiguration('f_y')
     grid_height = LaunchConfiguration('grid_height')
@@ -65,28 +57,15 @@ def generate_launch_description():
 
     ############# ROS2 DECLARATIONS #############
 
+    # Launch Arguments
+    run_rviz_arg = DeclareLaunchArgument(
+        'run_rviz', default_value='True',
+        description='Whether to start RVIZ')
+
     use_sim_dec = DeclareLaunchArgument(
         'use_sim_time',
         default_value='True',
         description='Use simulation (Omniverse Isaac Sim) clock if true')
-
-    params_file_arg = DeclareLaunchArgument(
-        'params_file',
-        default_value=os.path.join(get_package_share_directory(
-            'nvblox_nav2'), 'params', 'carter_nav2.yaml'),
-        description='Full path to param file to load')
-
-    use_depth_arg = DeclareLaunchArgument(
-        'use_depth',
-        default_value='True',
-        description='Use depth as an input for nvblox reconstruction'
-    )
-
-    use_lidar_arg = DeclareLaunchArgument(
-        'use_lidar',
-        default_value='True',
-        description='Use lidar as an input for nvblox reconstruction'
-    )
 
     featnet_engine_file_arg = DeclareLaunchArgument(
         'featnet_engine_file_path',
@@ -101,14 +80,6 @@ def generate_launch_description():
         'max_disparity_values',
         default_value='10',
         description='The maximum number of disparity values given for Bi3D inference')
-    base_link_frame_arg = DeclareLaunchArgument(
-        'base_link_frame',
-        default_value='base_link',
-        description='The name of the tf2 frame corresponding to the origin of the robot base')
-    camera_frame_arg = DeclareLaunchArgument(
-        'camera_frame',
-        default_value='carter_camera_stereo_left',
-        description='The name of the tf2 frame corresponding to the camera center')
     f_x_arg = DeclareLaunchArgument(
         'f_x',
         default_value='1465.99853515625',
@@ -200,14 +171,14 @@ def generate_launch_description():
         package='isaac_ros_bi3d_freespace',
         plugin='nvidia::isaac_ros::bi3d_freespace::FreespaceSegmentationNode',
         parameters=[{
-            'base_link_frame': base_link_frame,
-            'camera_frame': camera_frame,
+            'base_link_frame': 'base_link',
+            'camera_frame': 'carter_camera_stereo_left',
             'f_x': f_x_,
             'f_y': f_y_,
             'grid_height': grid_height,
             'grid_width': grid_width,
             'grid_resolution': grid_resolution,
-            'use_sim_time': True
+            'use_sim_time': use_sim_time
         }])
 
     isaac_ros_launch_container = ComposableNodeContainer(
@@ -244,12 +215,6 @@ def generate_launch_description():
         # output='screen'
     )
 
-    cmd_wrapper_fix_node = Node(
-        package='cmd_wrapper',
-        executable='cmd_wrapper',
-        output='screen'
-    )
-
     # include another launch file in nanosaur namespace
     # https://docs.ros.org/en/foxy/How-To-Guides/Launch-file-different-formats.html
     description_launch = IncludeLaunchDescription(
@@ -261,15 +226,10 @@ def generate_launch_description():
     # Launch ROS2 packages
     ld = LaunchDescription()
     # Definitions
-    ld.add_action(use_depth_arg)
-    ld.add_action(params_file_arg)
-    ld.add_action(use_lidar_arg)
     ld.add_action(use_sim_dec)
     ld.add_action(featnet_engine_file_arg)
     ld.add_action(segnet_engine_file_arg)
     ld.add_action(max_disparity_values_arg)
-    ld.add_action(base_link_frame_arg)
-    ld.add_action(camera_frame_arg)
     ld.add_action(f_x_arg)
     ld.add_action(f_y_arg)
     ld.add_action(grid_height_arg)
