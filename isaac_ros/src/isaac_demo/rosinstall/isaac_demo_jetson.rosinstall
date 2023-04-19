@@ -25,6 +25,9 @@
 - git:
     local-name: isaac_ros_proximity_segmentation
     uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_proximity_segmentation.git
+- git:
+    local-name: isaac_ros_freespace_segmentation
+    uri: https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_freespace_segmentation.git
 # Foxglove
 - git:
     local-name: ros-foxglove-bridge

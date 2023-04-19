@@ -67,8 +67,8 @@ run_jetson()
         
         # Build models
         echo " - ${green}Build models for isaac_ros_proximity_segmentation${reset}"
-        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_featnet.plan --onnx=$LOCAL_PATH/bi3d/featnet.onnx --int8 --useDLACore=0
-        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_segnet.plan --onnx=$LOCAL_PATH/bi3d/segnet.onnx --int8 --useDLACore=0
+        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_featnet.plan --onnx=$LOCAL_PATH/bi3d/featnet.onnx --int8 --useDLACore=0 --allowGPUFallback
+        /usr/src/tensorrt/bin/trtexec --saveEngine=$LOCAL_PATH/bi3d/bi3dnet_segnet.plan --onnx=$LOCAL_PATH/bi3d/segnet.onnx --int8 --useDLACore=0 --allowGPUFallback
         
         cd $LOCAL_PATH
     fi

@@ -99,7 +99,7 @@ def generate_launch_description():
 
     max_disparity_values_arg = DeclareLaunchArgument(
         'max_disparity_values',
-        default_value='64',
+        default_value='10',
         description='The maximum number of disparity values given for Bi3D inference')
     base_link_frame_arg = DeclareLaunchArgument(
         'base_link_frame',
@@ -111,11 +111,11 @@ def generate_launch_description():
         description='The name of the tf2 frame corresponding to the camera center')
     f_x_arg = DeclareLaunchArgument(
         'f_x',
-        default_value='732.999267578125',
+        default_value='1465.99853515625',
         description='The number of pixels per distance unit in the x dimension')
     f_y_arg = DeclareLaunchArgument(
         'f_y',
-        default_value='734.1167602539062',
+        default_value='1468.2335205078125',
         description='The number of pixels per distance unit in the y dimension')
     grid_height_arg = DeclareLaunchArgument(
         'grid_height',
@@ -188,10 +188,11 @@ def generate_launch_description():
                 'featnet_engine_file_path': featnet_engine_file_path,
                 'segnet_engine_file_path': segnet_engine_file_path,
                 'max_disparity_values': max_disparity_values,
+                'disparity_values': [3, 6, 9, 12, 15, 18, 21, 24, 27, 30],
                 'use_sim_time': use_sim_time}],
         remappings=[('bi3d_node/bi3d_output', 'bi3d_mask'),
-                    ('left_image_bi3d', 'rgb_left'),
-                    ('right_image_bi3d', 'rgb_right')]
+                    ('left_image_bi3d', '/front/stereo_camera/left/rgb'),
+                    ('right_image_bi3d', '/front/stereo_camera/right/rgb')]
     )
 
     freespace_segmentation_node = ComposableNode(
@@ -217,8 +218,8 @@ def generate_launch_description():
         composable_node_descriptions=[
             visual_slam_node,
             apriltag_node,
-            #bi3d_node,
-            #freespace_segmentation_node,
+            bi3d_node,
+            freespace_segmentation_node,
         ],
         output='screen'
     )
