@@ -76,6 +76,28 @@ Add docker group to your user
 sudo usermod -aG docker $USER && newgrp docker
 ```
 
+Set the default nvidia runtime
+
+You're going to be building containers, you need to set Docker's `default-runtime` to `nvidia`, so that the NVCC compiler and GPU are available during `docker build` operations.  Add `"default-runtime": "nvidia"` to your `/etc/docker/daemon.json` configuration file before attempting to build the containers:
+
+``` json
+{
+    "default-runtime": "nvidia",
+    "runtimes": {
+        "nvidia": {
+            "path": "nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    }
+}
+```
+
+Then restart the Docker service, or reboot your system before proceeding:
+
+```console
+sudo systemctl restart docker
+```
+
 Run the installer
 
 ```console
