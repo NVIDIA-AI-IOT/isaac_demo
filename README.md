@@ -8,16 +8,17 @@ A combined set of demo working with Isaac SIM on a workstation and Isaac ROS on 
 
 Workstation:
 
-1. x86/64 machine
-2. Install Ubuntu 20.04
-3. NVIDIA Graphic card with RTX
-4. Display
-5. Keyboard and Mouse
+1. Internet connection
+2. x86/64 machine
+3. Install Ubuntu 20.04
+4. NVIDIA Graphic card with RTX
+5. Display
+6. Keyboard and Mouse
 
 NVIDIA Jetson:
 
 1. NVIDIA Jetson AGX Orin
-2. Jetpack 5.0.2
+2. Jetpack 5.1.2
 
 Tools:
 
