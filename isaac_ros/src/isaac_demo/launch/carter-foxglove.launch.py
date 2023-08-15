@@ -207,6 +207,14 @@ def generate_launch_description():
             os.path.join(bringup_dir, 'launch', 'nvblox', 'nvblox.launch.py')]),
         launch_arguments={'setup_for_isaac_sim': 'True'}.items())
 
+    # https://foxglove.dev/docs/studio/connection/ros2
+    # https://github.com/foxglove/ros-foxglove-bridge
+    foxglove_bridge_node = Node(
+        package='foxglove_bridge',
+        executable='foxglove_bridge',
+        # output='screen'
+    )
+
     # include another launch file in nanosaur namespace
     # https://docs.ros.org/en/foxy/How-To-Guides/Launch-file-different-formats.html
     description_launch = IncludeLaunchDescription(
@@ -229,6 +237,8 @@ def generate_launch_description():
     ld.add_action(grid_resolution_arg)
     # carter description launch
     ld.add_action(description_launch)
+    # Foxglove
+    ld.add_action(foxglove_bridge_node)
     # Isaac ROS container
     ld.add_action(isaac_ros_launch_container)
     # vSLAM and NVBLOX

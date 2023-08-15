@@ -25,6 +25,7 @@ green=`tput setaf 2`
 yellow=`tput setaf 3`
 reset=`tput sgr0`
 
+FOXGLOVE_RUN=false
 LOCAL_PATH="/workspaces/isaac_ros-dev"
 ISAAC_DEMO_PKG_PATH="$LOCAL_PATH/src/isaac_demo"
 
@@ -81,24 +82,47 @@ run_jetson()
     echo " - ${green}Run isaac_demo${reset}"
     # source workspace
     source install/setup.bash
-    # Run demo
-    ros2 launch isaac_demo carter.launch.py
+
+    if $FOXGLOVE_RUN ; then
+        # Run demo
+        ros2 launch isaac_demo carter-foxglove.launch.py
+    else
+        # Run demo
+        ros2 launch isaac_demo carter.launch.py
+    fi
 }
 
 
 main()
 {
     local PLATFORM="$(uname -m)"
-    #local TESTRESOURCES_PKG=$(dpkg -l 2>/dev/null | grep -m1 "python3-testresources")
-    #if [ -z "$TESTRESOURCES_PKG" ] ; then
-    #    echo " - ${green}Install dependencies testresources${reset}"
-    #    sudo apt-get update
-    #    sudo apt-get install -y python3-testresources
-    #    sudo python3 -m pip install -U pip "setuptools<66.0.0"
-    #    sudo rm -rf /var/lib/apt/lists/*
-    #    sudo apt-get clean
-    #fi
+
+    # Decode all information from startup
+    while [ -n "$1" ]; do
+        case "$1" in
+            --foxglove)
+                FOXGLOVE_RUN=true
+                ;;
+            *)
+                echo "[ERROR] Unknown option: $1" >&2
+                exit 1
+                ;;
+        esac
+            shift 1
+    done
     
+    if $FOXGLOVE_RUN ; then
+        local TESTRESOURCES_PKG=$(dpkg -l 2>/dev/null | grep -m1 "python3-testresources")
+        if [ -z "$TESTRESOURCES_PKG" ] ; then
+            echo " - ${green}Install dependencies testresources${reset}"
+            sudo apt-get update
+            sudo apt-get install -y python3-testresources
+            # sudo python3 -m pip install -U pip "setuptools<66.0.0"
+            sudo rm -rf /var/lib/apt/lists/*
+            sudo apt-get clean
+        fi
+    fi
+
     if [ -d $HOME/.ros/ ] ; then
         if [ ! -f $HOME/.ros/fastdds.xml ] ; then
             echo " - ${green}Copy Fast DDS configuration on .ros folder${reset}"

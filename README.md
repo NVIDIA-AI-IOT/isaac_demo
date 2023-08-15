@@ -128,11 +128,11 @@ Follow the documentation on NVIDIA Isaac SIM [Workstation install](https://docs.
 
 Open Omniverse Launcher
 
-![Omniverse launcher](https://docs.omniverse.nvidia.com/app_isaacsim/_images/isaac_main_launcher_exchange.png)
+![Omniverse launcher](https://docs.omniverse.nvidia.com/isaacsim/latest/_images/isaac_main_launcher_exchange.png)
 
 Move to Library and choice "Omniverse Isaac SIM" and download the latest 2022.2 version
 
-![Omniverse library](https://docs.omniverse.nvidia.com/app_isaacsim/_images/isaac_main_launcher_library.png)
+![Omniverse library](https://docs.omniverse.nvidia.com/isaacsim/latest/_images/isaac_main_launcher_library.png)
 
 #### Foxglove on Desktop
 
@@ -201,6 +201,12 @@ Now you can run the script below
 
 ```console
 bash src/isaac_demo/scripts/run_in_docker.sh
+```
+
+if you are planning to use Foxglove please run the same script with option `--foxglove`
+
+```console
+bash src/isaac_demo/scripts/run_in_docker.sh --foxglove
 ```
 
 Well done! Now the Isaac ROS is running on your Jetson
