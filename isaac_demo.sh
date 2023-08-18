@@ -69,36 +69,42 @@ pull_isaac_ros_packages()
 
 workstation_install()
 {
-    if [ ! -d $ISAAC_SIM_PATH ] ; then
-        echo "${bold}${red}Install Isaac SIM $ISAAC_SIM_VERSION on your workstation${reset}"
-        exit 1
-    fi
 
-    echo "${green}${bold}Update/Install on desktop${reset}"
-
-    if [ -d $HOME/.ros/ ] ; then
-        if [ ! -f $HOME/.ros/fastdds.xml ] ; then
-            echo " - ${green}Copy Fast DDS configuration on .ros folder${reset}"
-            cp $ISAAC_DEMO_LOCAL_PATH/scripts/fastdds.xml $HOME/.ros/fastdds.xml
+    if [ ! SKIP_INSTALL ] ; then
+        if [ ! -d $ISAAC_SIM_PATH ] ; then
+            echo "${bold}${red}Install Isaac SIM $ISAAC_SIM_VERSION on your workstation${reset}"
+            exit 1
         fi
-    else
-        echo "${bold}${red}ROS not installed${reset}"
+
+        echo "${green}${bold}Update/Install on desktop${reset}"
+
+        if [ -d $HOME/.ros/ ] ; then
+            if [ ! -f $HOME/.ros/fastdds.xml ] ; then
+                echo " - ${green}Copy Fast DDS configuration on .ros folder${reset}"
+                cp $ISAAC_DEMO_LOCAL_PATH/scripts/fastdds.xml $HOME/.ros/fastdds.xml
+            fi
+        else
+            echo "${bold}${red}ROS not installed${reset}"
+        fi
+
+        pull_isaac_ros_packages $ISAAC_DEMO_LOCAL_PATH/rosinstall/isaac_demo_workstation.rosinstall
+
+        if $RVIZ_RUN ; then
+            echo " - ${green}Move to Isaac ROS common and run image${reset}"
+            cd $ISAAC_ROS_SRC_PATH/isaac_ros_common
+            gnome-terminal -e "bash scripts/run_dev.sh $ISAAC_ROS_PATH"
+        fi
     fi
 
-    pull_isaac_ros_packages $ISAAC_DEMO_LOCAL_PATH/rosinstall/isaac_demo_workstation.rosinstall
-
-    if $RVIZ_RUN ; then
-        echo " - ${green}Move to Isaac ROS common and run image${reset}"
-        cd $ISAAC_ROS_SRC_PATH/isaac_ros_common
-        gnome-terminal -e "bash scripts/run_dev.sh $ISAAC_ROS_PATH"
-    fi
+    unset LD_LIBRARY_PATH
 
     # https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox/blob/main/docs/tutorial-isaac-sim.md
     # Run Isaac ROS with Carter in a Warehouse
     echo " - ${green}Start Isaac SIM ${bold}$ISAAC_SIM_VERSION${reset}"
     echo "   ${green}Path:${reset} $ISAAC_DEMO_SIMULATION_PATH"
     # source /opt/ros/foxy/setup.bash
-    $ISAAC_SIM_PATH/python.sh $ISAAC_DEMO_SIMULATION_PATH
+    echo ">>> $ISAAC_SIM_PATH/python.sh $ISAAC_DEMO_SIMULATION_PATH --/persistent/isaac/asset_root/default='omniverse://localhost/NVIDIA/Assets/Isaac/2022.2.1'"
+    $ISAAC_SIM_PATH/python.sh $ISAAC_DEMO_SIMULATION_PATH --/persistent/isaac/asset_root/default='omniverse://localhost/NVIDIA/Assets/Isaac/2022.2.1'
 }
 
 jetson_l4t_check()
@@ -116,15 +122,17 @@ jetson_l4t_check()
 
 jetson_install()
 {
-    local JETSON_L4T=$(jetson_l4t_check)
-    if [[ "$(printf '%s\n' "$JETSON_L4T" "$ISAAC_DEMO_ROS_L4T" | sort -V | head -n1)" != "$JETSON_L4T" ]]; then
-        echo "${bold}${red}You cannot install isaac_demo on this Jetpack with L4T $JETSON_L4T need L4T $ISAAC_DEMO_ROS_L4T${reset}"
-        exit 1
+    if [ ! SKIP_INSTALL ] ; then
+        local JETSON_L4T=$(jetson_l4t_check)
+        if [[ "$(printf '%s\n' "$JETSON_L4T" "$ISAAC_DEMO_ROS_L4T" | sort -V | head -n1)" != "$JETSON_L4T" ]]; then
+            echo "${bold}${red}You cannot install isaac_demo on this Jetpack with L4T $JETSON_L4T need L4T $ISAAC_DEMO_ROS_L4T${reset}"
+            exit 1
+        fi
+
+        echo "${green}${bold}Install on NVIDIA Jetson L4T $JETSON_L4T${reset}"
+
+        pull_isaac_ros_packages $ISAAC_DEMO_LOCAL_PATH/rosinstall/isaac_demo_jetson.rosinstall
     fi
-
-    echo "${green}${bold}Install on NVIDIA Jetson L4T $JETSON_L4T${reset}"
-
-    pull_isaac_ros_packages $ISAAC_DEMO_LOCAL_PATH/rosinstall/isaac_demo_jetson.rosinstall
 
     if [ ! -f $ISAAC_ROS_SRC_PATH/isaac_ros_common/scripts/.isaac_ros_common-config  ] ; then
         echo " - ${green}Setup Isaac ROS docker image${reset}"
@@ -152,6 +160,7 @@ usage()
     echo "   -y                   | Run this script silent" >&2
     echo "   --rviz               | Run rviz2 on desktop (default)" >&2
     echo "   --foxglove           | Run foxglove on desktop" >&2
+    echo "   --skip-install       | Skip installing and just run the demo" >&2
     echo "   -h|--help            | This help" >&2
 }
 
@@ -173,6 +182,9 @@ main()
                 ;;
             --foxglove)
                 FOXGLOVE_RUN=true
+                ;;
+            --skip-install)
+                SKIP_INSTALL=true
                 ;;
             -y)
                 SILENT=true
