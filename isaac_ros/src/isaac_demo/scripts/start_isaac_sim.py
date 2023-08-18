@@ -231,13 +231,15 @@ def main(scenario_path: str,
          headless: bool = False,
          with_people: bool = True,
          use_generated_command_file: bool = False,
-         tick_rate_hz: float = 20.0):
+         tick_rate_hz: float = 60.0):
 
     # Start up the simulator
     from omni.isaac.kit import SimulationApp
     simulation_app = SimulationApp({
         'renderer': 'RayTracedLighting',
-        'headless': headless
+        'headless': headless,
+        'width': 720,
+        'height': 480
     })
 
     import omni.kit.commands
@@ -248,6 +250,7 @@ def main(scenario_path: str,
     enable_extensions_for_sim(with_people)
 
     assets_root_path = get_assets_root_path()
+    print(f'##### [from omni.isaac.core.utils.nucleus] get_assets_root_path() returns:  {assets_root_path}')
     if assets_root_path is None:
         print(
             'Could not find Isaac Sim assets folder. Make sure you have an up to date local \
@@ -310,7 +313,7 @@ def main(scenario_path: str,
     right_info.get_attribute('inputs:stereoOffset').set(stereo_offset)
 
     time_dt = 1.0 / tick_rate_hz
-    print(f'Running sim at {tick_rate_hz} Hz, with dt of {time_dt}')
+    print(f'### Running sim at {tick_rate_hz} Hz, with dt of {time_dt}')
     # Run physics at 60 Hz and render time at the set frequency to see the sim as real time
     simulation_context = SimulationContext(stage_units_in_meters=1.0,
                                            physics_dt=1.0 / 60,
@@ -382,7 +385,7 @@ if __name__ == '__main__':
         '--tick_rate_hz',
         type=int,
         help='The rate (in hz) that we step the simulation at.',
-        default=20)
+        default=60)
     parser.add_argument(
         '--anim_people_waypoint_dir',
         help='Directory location to save the waypoints in a yaml file')
