@@ -70,7 +70,7 @@ pull_isaac_ros_packages()
 workstation_install()
 {
 
-    if [ ! SKIP_INSTALL ] ; then
+    if [ -z ${SKIP_INSTALL+x} ] ; then
         if [ ! -d $ISAAC_SIM_PATH ] ; then
             echo "${bold}${red}Install Isaac SIM $ISAAC_SIM_VERSION on your workstation${reset}"
             exit 1
@@ -122,7 +122,7 @@ jetson_l4t_check()
 
 jetson_install()
 {
-    if [ ! SKIP_INSTALL ] ; then
+    if [ -z ${SKIP_INSTALL+x} ] ; then
         local JETSON_L4T=$(jetson_l4t_check)
         if [[ "$(printf '%s\n' "$JETSON_L4T" "$ISAAC_DEMO_ROS_L4T" | sort -V | head -n1)" != "$JETSON_L4T" ]]; then
             echo "${bold}${red}You cannot install isaac_demo on this Jetpack with L4T $JETSON_L4T need L4T $ISAAC_DEMO_ROS_L4T${reset}"
